@@ -12,6 +12,7 @@
 
 from fastmcp import FastMCP
 from fastmcp.server.openapi import ( FastMCPOpenAPI, RouteMap, MCPType,)
+from fastmcp.experimental.server.openapi import RouteMap, MCPType
 from typing import Any
 import httpx
 import yaml
@@ -19,9 +20,17 @@ import json
 import argparse
 import sys
 import asyncio
+import logging
+from fastmcp.server.middleware.logging import LoggingMiddleware
+from fastmcp.utilities.logging import get_logger
 
-#import logging
+for comp in [ "fastmcp.experimental.utilities.openapi.director",
+              "fastmcp.experimental.server.openapi.components",
+              "fastmcp.experimental.server.openapi.server" ]:
+    get_logger(comp).setLevel(logging.DEBUG)
+
 #logging.basicConfig(level=logging.DEBUG) # Configure root logger
+
 
 def load(path:str='/dev/stdin') -> Any:
     """load json/yaml from file"""
@@ -43,6 +52,7 @@ async def test(cli, uri) -> Any:
 
 if __name__ == '__main__':
 
+
     parser = argparse.ArgumentParser()
     parser.add_argument('-s', '--spec',      help='OpenAPI spec file for gateway (json/yaml)', default='/dev/stdin')
     parser.add_argument('-b', '--baseURL',   help='baseURL to REST Server',                    default='')
@@ -57,7 +67,7 @@ if __name__ == '__main__':
     opts.headers = {}
 
     if opts.token not in [None, '']:
-         opts.headers.update(Authorization=f'bearer {opts.token}')
+         opts.headers.update(Authorization=f'Bearer {opts.token}')
     print(f"opts: ########### {opts}", file=sys.stderr)
 
     #exit(0)
@@ -70,7 +80,14 @@ if __name__ == '__main__':
     #asyncio.run( test( cli, "/orgs/..."))
     #exit(0)
 
-    mcp = FastMCP.from_openapi(spec, client=cli)
+    DEFAULT_ROUTE_MAPPINGS = [
+       RouteMap(methods=["GET"], pattern=r".*\{.*\}.*", mcp_type=MCPType.RESOURCE_TEMPLATE),
+       RouteMap(methods=["GET"], pattern=r".*",         mcp_type=MCPType.RESOURCE),
+#      RouteMap(mcp_type=MCPType.TOOL),
+    ]
+
+    mcp = FastMCP.from_openapi(spec, client=cli, route_maps=DEFAULT_ROUTE_MAPPINGS)
+#   mcp.add_middleware(LoggingMiddleware())
 
     kwargs = dict(transport=opts.transport)
     if opts.transport not in ['stdio']:
