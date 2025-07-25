@@ -1,0 +1,54 @@
+volumes:
+  caddy-data:
+    name: caddy-data
+    #   driver: local
+    #   driver_opts:
+    #     o: bind
+    #     device: ${dDir}/caddy
+    #     type: none
+  caddy-config:
+    name: caddy-config
+
+networks:
+ default:
+    name: ${docker_network}
+    external: true
+
+services:
+  # REST<=>MCP gateway
+  mcp-gateway:
+    image: itaru2622/mcp:bookworm
+    ports:
+      - 8888:8888
+    environment:
+      - FASTMCP_EXPERIMENTAL_ENABLE_NEW_OPENAPI_PARSER=true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${wDir}:${wDir}
+    commad: tail -f /bin/bash
+    restart: allways
+
+
+  # MCP inspector
+  inspector:
+    image: node:22-bookworm
+    ports:
+      - 3000:3000
+      - 3001:3001
+    environment:
+      - DANGEROUSLY_OMIT_AUTH=true
+      - CLIENT_PORT=3000
+      - SERVER_PORT=3001
+      - HOST=0.0.0.0
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS}
+    command: npx @modelcontextprotocol/inspector
+    restart: always
+
+  redoc:
+    image: redocly/redoc
+    ports:
+      - 3002:80
+    environment:
+      - SPEC_URL=${wDir}/ghec-get.json
+    volumes:
+      - ${wDir}:${wDir}
