@@ -80,13 +80,13 @@ if __name__ == '__main__':
     #asyncio.run( test( cli, "/orgs/..."))
     #exit(0)
 
-    DEFAULT_ROUTE_MAPPINGS = [
+    route_maps = [
        RouteMap(methods=["GET"], pattern=r".*\{.*\}.*", mcp_type=MCPType.RESOURCE_TEMPLATE),
        RouteMap(methods=["GET"], pattern=r".*",         mcp_type=MCPType.RESOURCE),
 #      RouteMap(mcp_type=MCPType.TOOL),
     ]
 
-    mcp = FastMCP.from_openapi(spec, client=cli, route_maps=DEFAULT_ROUTE_MAPPINGS)
+    mcp = FastMCP.from_openapi(spec, client=cli, route_maps=route_maps)
 #   mcp.add_middleware(LoggingMiddleware())
 
     kwargs = dict(transport=opts.transport)
