@@ -25,8 +25,9 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ${wDir}:${wDir}
-    commad: tail -f /bin/bash
-    restart: allways
+    working_dir: ${wDir}
+    command: tail -f /bin/bash
+    restart: always
 
 
   # MCP inspector
@@ -49,6 +50,7 @@ services:
     ports:
       - 3002:80
     environment:
-      - SPEC_URL=${wDir}/ghec-get.json
+      - SPEC_URL=my/ghec-get.json
     volumes:
-      - ${wDir}:${wDir}
+      - ${wDir}:/usr/share/nginx/html/my
+    restart: always
