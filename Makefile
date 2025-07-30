@@ -7,7 +7,7 @@ myIP    ?=$(shell ip addr|grep 'inet '|grep -v '\.1/'|tr -s ' '|awk '{$$1=$$1};1
 
 docker_network=mcp-sandbox
 
-port_mcp       ?=8888
+port_mcp       ?=8888-8889
 port_inspector ?=3000
 port_inspector_proxy ?=3001
 img_node ?=node:22-bookworm
