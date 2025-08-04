@@ -23,6 +23,8 @@ services:
       - 8889:8889
     environment:
       - FASTMCP_EXPERIMENTAL_ENABLE_NEW_OPENAPI_PARSER=true
+      - wDir=${wDir}
+      - PYTHONPATH=${wDir}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ${wDir}:${wDir}
@@ -51,7 +53,8 @@ services:
     image: docker.swagger.io/swaggerapi/swagger-editor:next-v5
     ports:
       - 8080:80
-#   environment:
+    environment:
+      - wDir=${wDir}
 #     - REACT_APP_SWAGEER_FILE=my/ghec-get.json
     volumes:
       - ${wDir}:${wDir}

@@ -21,6 +21,7 @@ bash:
 	docker run --rm -it \
 	-p ${port_mcp}:${port_mcp} \
 	-e FASTMCP_EXPERIMENTAL_ENABLE_NEW_OPENAPI_PARSER=true \
+	-e PYTHONPATH=${wDir} \
 	-v /var/run/docker.sock:/var/run/docker.sock \
 	-v ${wDir}:${wDir} -w ${wDir} \
 	${img} /bin/bash
