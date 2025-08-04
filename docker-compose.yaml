@@ -46,12 +46,13 @@ services:
     command: npx @modelcontextprotocol/inspector
     restart: always
 
-  redoc:
-    image: redocly/redoc
+# swagger editor supporting openAPI v3.1 and try-it-out
+  swagger:
+    image: docker.swagger.io/swaggerapi/swagger-editor:next-v5
     ports:
-      - 3002:80
-    environment:
-      - SPEC_URL=my/ghec-get.json
+      - 8080:80
+#   environment:
+#     - REACT_APP_SWAGEER_FILE=my/ghec-get.json
     volumes:
-      - ${wDir}:/usr/share/nginx/html/my
+      - ${wDir}:${wDir}
     restart: always
