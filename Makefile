@@ -6,6 +6,7 @@ myIP    ?=$(shell ip addr|grep 'inet '|grep -v '\.1/'|tr -s ' '|awk '{$$1=$$1};1
 #myIP   ?=192.168.1.2
 
 docker_network=mcp-sandbox
+sDir  ?=${wDir}/src
 
 port_mcp       ?=8888-8889
 port_inspector ?=3000
@@ -21,7 +22,9 @@ bash:
 	docker run --rm -it \
 	-p ${port_mcp}:${port_mcp} \
 	-e FASTMCP_EXPERIMENTAL_ENABLE_NEW_OPENAPI_PARSER=true \
-	-e PYTHONPATH=${wDir} \
+	-e wDir=${wDir} \
+	-e sDir=${sDir} \
+	-e PYTHONPATH=${sDir} \
 	-v /var/run/docker.sock:/var/run/docker.sock \
 	-v ${wDir}:${wDir} -w ${wDir} \
 	${img} /bin/bash
@@ -36,11 +39,11 @@ inspector:
         ${img_node} ${inspector}
 
 start: docker-net-start
-	wDir=${wDir} ALLOWED_ORIGINS=${ALLOWED_ORIGINS} \
+	wDir=${wDir} sDir=${sDir} ALLOWED_ORIGINS=${ALLOWED_ORIGINS} \
 	docker_network=${docker_network} \
 	docker compose -f ./docker-compose.yaml up -d ${services}
 stop::
-	wDir=${wDir} ALLOWED_ORIGINS=${ALLOWED_ORIGINS} \
+	wDir=${wDir} sDir=${sDir} ALLOWED_ORIGINS=${ALLOWED_ORIGINS} \
 	docker compose -f ./docker-compose.yaml down -v
 stop::  docker-net-stop
 
