@@ -28,15 +28,6 @@ from fastmcp.utilities.logging import get_logger
 from FullRelayMiddleware import FullRelayMiddleware
 
 
-for comp in [ "fastmcp.experimental.utilities.openapi.director",
-              "fastmcp.experimental.server.openapi.components",
-              "fastmcp.experimental.server.openapi.server",
-              "FullRelayMiddleware"]:
-    get_logger(comp).setLevel(logging.DEBUG)
-
-#logging.basicConfig(level=logging.DEBUG) # Configure root logger
-
-
 def load(path:str='/dev/stdin') -> Any:
     """load json|yaml|text(url) from file"""
 
@@ -74,6 +65,14 @@ if __name__ == '__main__':
 
     spec = load(opts.spec)
     # exit(0)
+
+    for comp in [ "fastmcp.experimental.utilities.openapi.director",
+                  "fastmcp.experimental.server.openapi.components",
+                  "fastmcp.experimental.server.openapi.server",
+                  "FullRelayMiddleware"]:
+        get_logger(comp).setLevel(logging.DEBUG)
+
+    #logging.basicConfig(level=logging.DEBUG) # Configure root logger
 
     mcp = FastMCP.as_proxy(backend=spec, name='MCP to MCP gateway') # create instance as MCP<=>MCP proxy.
     mcp.add_middleware(FullRelayMiddleware())
