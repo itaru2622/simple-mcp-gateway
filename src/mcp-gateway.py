@@ -25,14 +25,6 @@ from fastmcp.server.middleware.logging import LoggingMiddleware
 from fastmcp.utilities.logging import get_logger
 from FullRelayMiddleware import FullRelayMiddleware
 
-for comp in [ "fastmcp.experimental.utilities.openapi.director",
-              "fastmcp.experimental.server.openapi.components",
-              "fastmcp.experimental.server.openapi.server",
-              "FullRelayMiddleware"]:
-    get_logger(comp).setLevel(logging.DEBUG)
-
-#logging.basicConfig(level=logging.DEBUG) # Configure root logger
-
 
 def load(path:str='/dev/stdin') -> Any:
     """load json/yaml from file"""
@@ -73,6 +65,14 @@ if __name__ == '__main__':
     print(f"opts: ########### {opts}", file=sys.stderr)
 
     #exit(0)
+
+    for comp in [ "fastmcp.experimental.utilities.openapi.director",
+                  "fastmcp.experimental.server.openapi.components",
+                  "fastmcp.experimental.server.openapi.server",
+                  "FullRelayMiddleware"]:
+        get_logger(comp).setLevel(logging.DEBUG)
+
+    #logging.basicConfig(level=logging.DEBUG) # Configure root logger
     
     spec = load(opts.spec)
 
