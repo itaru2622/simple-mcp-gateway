@@ -8,8 +8,7 @@ services:
   mcp-gateway:
     image: itaru2622/mcp:bookworm
     ports:
-      - 8888:8888
-      - 8889:8889
+      - ${port_mcpgateway}:${port_mcpgateway}
     environment:
       - FASTMCP_EXPERIMENTAL_ENABLE_NEW_OPENAPI_PARSER=true
       - wDir=${wDir}
@@ -19,7 +18,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - ${wDir}:${wDir}
     working_dir: ${wDir}
-    command: tail -f /bin/bash
+    command: tail -f /dev/null
     restart: always
 
 
@@ -27,12 +26,12 @@ services:
   inspector:
     image: node:22-bookworm
     ports:
-      - 3000:3000
-      - 3001:3001
+      - ${port_inspector}:${port_inspector}
+      - ${port_inspector_proxy}:${port_inspector_proxy}
     environment:
       - DANGEROUSLY_OMIT_AUTH=true
-      - CLIENT_PORT=3000
-      - SERVER_PORT=3001
+      - CLIENT_PORT=${port_inspector}
+      - SERVER_PORT=${port_inspector_proxy}
       - HOST=0.0.0.0
       - ALLOWED_ORIGINS=${ALLOWED_ORIGINS}
     command: npx @modelcontextprotocol/inspector
@@ -42,7 +41,7 @@ services:
   swagger:
     image: docker.swagger.io/swaggerapi/swagger-editor:next-v5
     ports:
-      - 8080:80
+      - ${port_swagger}:80
     environment:
       - wDir=${wDir}
       - sDir=${sDir}
