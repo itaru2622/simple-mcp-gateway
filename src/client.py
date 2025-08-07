@@ -25,25 +25,18 @@ from itertools import cycle
 from utils import load
 
 
-async def test(cli) -> Any:
+async def test(cli: Any, cmds:list[str]=["list_tools", "list_resources", "list_resource_templates", "list_prompts"] ) -> list[Any]:
 
-    rtn = defaultdict(list[Any])
-    arr = []
-
-    cmds = [
-             ( 'tools', cli.list_tools )
-            ,( 'resources', cli.list_resources )
-            ,( 'resource_templates', cli.list_resource_templates )
-            ,( 'prompts', cli.list_prompts )
-           ]
-
+    rtn = []
     async with cli:
-      for k, op in cmds:
-        tmp = await op()
-        arr += zip( cycle([k]), (tmp or []) ) # same as: arr += [ (k, v) for v in (tmp or []) ]
-        rtn[k] = tmp
-
-    return rtn, arr
+        for cmd in cmds:
+            try:
+                op = getattr(cli, cmd)
+                rtn += await op()
+            except Exception as e:
+                print(f'error detected but ignored, {e=}', file=sys.stderr)
+                continue
+    return rtn
 
 
 def get_event_loop() -> Any:
@@ -62,6 +55,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-s', '--spec',      help='mcpServeers config to connect (json/yaml/text[url])', default='/dev/stdin')
     parser.add_argument('-d', '--log_level', help='MCP log level',                      default='DEBUG')
+    parser.add_argument('-c', '--cmds',      help='MCP Client commands to execute', nargs='*', default=["list_tools", "list_resources", "list_resource_templates", "list_prompts"])
     opts = parser.parse_args()
 
     #for comp in [ 'fastmcp.experimental.utilities.openapi.director',
@@ -75,14 +69,13 @@ if __name__ == '__main__':
     client = Client(spec)
     #exit(0)
 
-    #asyncio.run( test(client) )
     loop = get_event_loop()
-    _, tmp = loop.run_until_complete(asyncio.gather( test(client) ))[0]
+    resp = loop.run_until_complete(asyncio.gather( test(client, cmds=opts.cmds) ))[0]
     loop.close()
 
     # reshape responded data to make them easy to use.
     rtn = []
-    for _,v in tmp:
+    for v in resp:
        d = v.model_dump(); # base data: pydantic BaseModel dump
        T = type(v)
        d.update({  'type': T.__name__, 'class': f'{T.__module__}.{T.__qualname__}' }) # add type info
