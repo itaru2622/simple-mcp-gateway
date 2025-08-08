@@ -12,6 +12,7 @@ port_inspector       ?=3000
 port_inspector_proxy ?=3001
 port_swagger         ?=8080
 ALLOWED_ORIGINS      ?=http://${myIP}:${port_inspector}
+GH_MCP_PAT           ?=changme
 
 # list of yaml files in ${cDir}
 confs_yaml ?=$(shell find ${cDir} -type f | sort -f |  grep .yaml$$)
@@ -45,6 +46,8 @@ _mk_vars:
 	wDir=${wDir} \
 	sDir=${sDir} \
 	cDir=${cDir} \
+	myIP=${myIP} \
+	GH_MCP_PAT=${GH_MCP_PAT} \
 	ALLOWED_ORIGINS=${ALLOWED_ORIGINS} \
 	port_inspector=${port_inspector} \
 	port_inspector_proxy=${port_inspector_proxy} \

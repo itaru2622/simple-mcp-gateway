@@ -13,6 +13,8 @@ services:
       - FASTMCP_EXPERIMENTAL_ENABLE_NEW_OPENAPI_PARSER=true
       - wDir=${wDir}
       - sDir=${sDir}
+      - myIP=${myIP}
+      - GH_MCP_PAT=${GH_MCP_PAT}
       - PYTHONPATH=${sDir}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
