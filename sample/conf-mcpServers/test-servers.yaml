@@ -1,0 +1,12 @@
+#
+# mcp server configuration
+# '${...}' will be replaced by the value of corresponding environment variable at runtime.
+#
+mcpServers:
+  testServer1:
+    transport: http
+    url: http://${myIP}:8888/mcp/
+  testServer2:
+    transport: http
+    url: http://${myIP}:8890/mcp/
+
