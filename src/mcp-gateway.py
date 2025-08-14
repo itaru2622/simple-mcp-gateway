@@ -22,10 +22,11 @@ import sys
 import asyncio
 import logging
 from fastmcp.server.middleware.logging import LoggingMiddleware
-from fastmcp.utilities.logging import get_logger
+from fastmcp.utilities.logging import get_logger, configure_logging as configFastMcpLogger
 # my own ...
 from FullRelayMiddleware import FullRelayMiddleware
 from utils.conf import load
+
 
 async def test(cli, uri) -> Any:
     rtn = await cli.get(uri)
@@ -55,12 +56,12 @@ if __name__ == '__main__':
     print(f"opts: ########### {opts}", file=sys.stderr)
 
     #exit(0)
-
+    configFastMcpLogger(level=opts.log_level)
     for comp in [ "fastmcp.experimental.utilities.openapi.director",
                   "fastmcp.experimental.server.openapi.components",
                   "fastmcp.experimental.server.openapi.server",
                   "FullRelayMiddleware"]:
-        get_logger(comp).setLevel(logging.DEBUG)
+        configFastMcpLogger(level=opts.log_level, logger=get_logger(comp) )
 
     #logging.basicConfig(level=logging.DEBUG) # Configure root logger
     
@@ -84,8 +85,8 @@ if __name__ == '__main__':
     mcp.add_middleware(FullRelayMiddleware())
     '''
     logger = get_logger('fastmcp.server.middleware.logging.LoggingMiddleware')
-    logger.setLevel(logging.DEBUG)
-    mcp.add_middleware(LoggingMiddleware(logger=logger, log_level=logging.DEBUG))
+    logger.setLevel(opts.log_level)
+    mcp.add_middleware(LoggingMiddleware(logger=logger, log_level=opts.log_level))
     '''
 
     kwargs = dict(transport=opts.transport)
