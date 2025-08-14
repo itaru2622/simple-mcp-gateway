@@ -4,7 +4,7 @@ import json
 import yaml
 import argparse
 import sys
-from utils import load
+from utils.conf import load
 
 if __name__ == '__main__':
     '''

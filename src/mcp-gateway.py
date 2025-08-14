@@ -25,7 +25,7 @@ from fastmcp.server.middleware.logging import LoggingMiddleware
 from fastmcp.utilities.logging import get_logger
 # my own ...
 from FullRelayMiddleware import FullRelayMiddleware
-from utils import load
+from utils.conf import load
 
 async def test(cli, uri) -> Any:
     rtn = await cli.get(uri)

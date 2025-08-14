@@ -22,7 +22,7 @@ from collections import defaultdict
 from fastapi.encoders import jsonable_encoder
 from itertools import cycle
 # my own ...
-from utils import load
+from utils.conf import load
 
 
 async def test(cli: Any, cmds:list[str]=["list_tools", "list_resources", "list_resource_templates", "list_prompts"] ) -> list[Any]:
@@ -81,4 +81,8 @@ if __name__ == '__main__':
        d.update({  'type': T.__name__, 'class': f'{T.__module__}.{T.__qualname__}' }) # add type info
        rtn.append(d)
 
-    print(json.dumps(rtn, ensure_ascii=False, indent=2), file=sys.stdout)
+    try:
+        print(json.dumps(rtn, default=str, ensure_ascii=False, indent=2), file=sys.stdout) # default=str for AnyUrl of pydantic
+    except Exception as e:
+        print(rtn, file=sys.stdout)
+        print(f'got exception then falldown to normal print: {e=}', file=sys.stderr)
