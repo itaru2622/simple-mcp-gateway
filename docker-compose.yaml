@@ -6,7 +6,7 @@ networks:
 services:
   # REST<=>MCP gateway
   mcp-gateway:
-    image: itaru2622/mcp:bookworm
+    image: itaru2622/mcp:trixie
     ports:
       - ${port_mcpgateway}:${port_mcpgateway}
     environment:
@@ -26,7 +26,7 @@ services:
 
   # MCP inspector
   inspector:
-    image: node:22-bookworm
+    image: node:22-trixie
     ports:
       - ${port_inspector}:${port_inspector}
       - ${port_inspector_proxy}:${port_inspector_proxy}
