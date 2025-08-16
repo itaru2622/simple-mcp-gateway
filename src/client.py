@@ -59,7 +59,7 @@ if __name__ == '__main__':
     parser.add_argument('-f', '--logFile',   help='log file path',                  default='/dev/stderr')
     opts = parser.parse_args()
 
-    configFastMcpLogger(level=opts.logLevel)
+    configFastMcpLogger(level=opts.logLevel, log_time_format='%Y-%m-%d %H:%M:%S')
     '''
     # alternative log to file.
     handlers = [ mkLoggingHandler(handler=logging.FileHandler, filename=opts.logFile) ]
