@@ -56,12 +56,12 @@ if __name__ == '__main__':
     print(f"opts: ########### {opts}", file=sys.stderr)
 
     #exit(0)
-    configFastMcpLogger(level=opts.log_level)
+    configFastMcpLogger(level=opts.log_level, log_time_format='%Y-%m-%d %H:%M:%S')
     for comp in [ "fastmcp.experimental.utilities.openapi.director",
                   "fastmcp.experimental.server.openapi.components",
                   "fastmcp.experimental.server.openapi.server",
                   "FullRelayMiddleware"]:
-        configFastMcpLogger(level=opts.log_level, logger=get_logger(comp) )
+        configFastMcpLogger(level=opts.log_level, logger=get_logger(comp), log_time_format='%Y-%m-%d %H:%M:%S')
 
     #logging.basicConfig(level=logging.DEBUG) # Configure root logger
     
