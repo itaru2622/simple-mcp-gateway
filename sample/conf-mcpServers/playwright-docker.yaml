@@ -1,0 +1,20 @@
+#
+# mcp server configuration
+# cf. https://github.com/microsoft/playwright-mcp
+#
+mcpServers:
+  playwright:
+    transport: stdio
+    command: docker
+    args:
+      - run
+      - -i
+      - --rm
+      - mcp/playwright
+      - --headless
+      - --isolated
+      - --no-sandbox
+      - --browser
+      - chromium
+      - --output-dir
+      - /tmp
