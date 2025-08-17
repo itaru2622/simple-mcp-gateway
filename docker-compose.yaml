@@ -9,6 +9,7 @@ services:
     image: itaru2622/mcp:trixie
     ports:
       - ${port_mcpgateway}:${port_mcpgateway}
+    privileged: true
     environment:
       - FASTMCP_EXPERIMENTAL_ENABLE_NEW_OPENAPI_PARSER=true
       - wDir=${wDir}
@@ -17,10 +18,8 @@ services:
       - GH_MCP_PAT=${GH_MCP_PAT}
       - PYTHONPATH=${sDir}
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
       - ${wDir}:${wDir}
     working_dir: ${wDir}
-    command: tail -f /dev/null
     restart: always
 
 
