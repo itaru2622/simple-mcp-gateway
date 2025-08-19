@@ -19,6 +19,7 @@ services:
       - PYTHONPATH=${sDir}
     volumes:
       - ${wDir}:${wDir}
+      - /etc/resolv.conf:/etc/resolv.conf:ro
     working_dir: ${wDir}
     restart: always
 
