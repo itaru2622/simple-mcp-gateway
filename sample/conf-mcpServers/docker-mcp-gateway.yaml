@@ -1,0 +1,25 @@
+# https://github.com/docker/mcp-gateway
+mcpServers:
+  docker-mcp-gateway-http-testing:
+    transport: http
+    url: http://${myIP}:8890/
+# execute below commands in advance
+# starts >>>>
+# docker mcp catalog update
+# docker mcp server enable fetch
+# docker mcp server list
+# docker mcp gatway run --watch --verbose --log-calls --long-lived --transport streaming --port 8890
+# <<< ends
+#
+
+#  docker-mcp-gateway-stdio:
+#    transport: stdio
+#    command: docker
+#    args:
+#      - mcp
+#      - gateway
+#      - run
+#      - --watch
+#      - --verbose
+#      - --log-calls
+#      - --long-lived
