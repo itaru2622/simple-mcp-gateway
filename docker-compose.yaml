@@ -17,6 +17,7 @@ services:
       - myIP=${myIP}
       - GH_MCP_PAT=${GH_MCP_PAT}
       - PYTHONPATH=${sDir}
+      - DOCKER_DRIVER=vfs
     volumes:
       - ${wDir}:${wDir}
       - /etc/resolv.conf:/etc/resolv.conf:ro
