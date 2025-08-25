@@ -8,7 +8,7 @@ mcpServers:
 # docker mcp catalog update
 # docker mcp server enable fetch
 # docker mcp server list
-# docker mcp gatway run --watch --verbose --log-calls --long-lived --transport streaming --port 8890
+# docker mcp gateway run --watch --verbose --log-calls --long-lived --transport streaming --port 8890
 # <<< ends
 #
 

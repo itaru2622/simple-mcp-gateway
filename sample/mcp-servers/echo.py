@@ -1,7 +1,7 @@
 """
 FastMCP Echo Server
 cf. https://github.com/jlowin/fastmcp/blob/main/examples/echo.py
-fastmcp run --server-spec thisfile.py --tranport http --host 0.0.0.0 --port 8890
+fastmcp run --server-spec thisfile.py --transport http --host 0.0.0.0 --port 8890
 """
 
 from fastmcp import FastMCP
