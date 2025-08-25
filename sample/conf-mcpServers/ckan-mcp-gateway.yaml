@@ -1,0 +1,29 @@
+# https://github.com/ondics/ckan-mcp-server
+# https://github.com/japan-opendata/awesome-japan-opendata
+#
+# CKAN_URL:
+#  - https://demo.ckan.org
+#  - https://catalog.data.metro.tokyo.lg.jp
+#  - https://data.bodik.jp
+#
+
+mcpServers:
+   ckan-mcp-gateway:
+     transport: stdio
+     command: docker
+     args:
+       - run
+       - -i
+       - -e
+       - CKAN_URL=${CKAN_URL}
+       - -e
+       - LOG_LEVEL=DEBUG
+       - itaru2622/ckan-mcp:trixie
+#   ckan-mcp:
+#     transport: stdio
+#     command: python
+#     args:
+#       - ${wDir}/sample/mcp-servers/ckan-mcp/mcp_ckan_server.py
+#     env:
+#       LOG_LEVEL: INFO
+#       CKAN_URL: ${CKAN_URL}
