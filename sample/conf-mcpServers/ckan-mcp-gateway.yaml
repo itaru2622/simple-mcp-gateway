@@ -6,7 +6,8 @@
 #  - https://catalog.data.metro.tokyo.lg.jp
 #  - https://catalog.opendata.pref.kanagawa.jp
 #  - https://data.bodik.jp
-#  - https://www.geospatial.jp/ckan/api/3/action/
+#  - https://www.geospatial.jp/ckan
+#  - https://search.ckan.jp CKAN_PATH_PREFIX=/backend/api/  # proprietary responce scheam/API, federated ckan server !?
 #
 
 mcpServers:
@@ -18,6 +19,8 @@ mcpServers:
        - -i
        - -e
        - CKAN_URL=${CKAN_URL}
+       - -e
+       - CKAN_PATH_PREFIX=${CKAN_PATH_PREFIX}
        - -e
        - LOG_LEVEL=DEBUG
        - itaru2622/ckan-mcp:trixie
