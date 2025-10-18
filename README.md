@@ -31,7 +31,7 @@ make bash
 
 ```bash
 # usage
-./src/mcp-gatway.py --help
+./src/mcp-gateway.py --help
 
 usage: mcp-gateway.py [-h] [-s SPEC] [-b BASEURL] [-a TOKEN] [-t TRANSPORT] [-p PORT] [-H HOST] [-l PATH] [-d LOG_LEVEL]
 options:
@@ -48,7 +48,7 @@ options:
 
 ```bash
 # example:
-cat sample/openapi-specs/ghec-get-org-pruned-openapi31-validated.json | ./src/mcp-gatway.py -b https://api.github.com
+cat sample/openapi-specs/ghec-get-org-pruned-openapi31-validated.json | ./src/mcp-gateway.py -b https://api.github.com
 ```
 
 
