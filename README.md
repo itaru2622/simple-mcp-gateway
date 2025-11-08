@@ -75,7 +75,7 @@ options:
 
 ```bash
 # example
-cat sample/conf-mcpServers/echo.yaml | ./src/double-mcp-gateway.py 
+cat sample/conf-mcpServers/echo.yaml | ./src/double-mcp-gateway.py
 ```
 
 ```bash
@@ -98,5 +98,39 @@ fastmcp run --server-spec sample/mcp-servers/echo.py  --transport http --host 0.
 - source: src/llmclient.py
 
 ```bash
-cat sample/conf-mcpServers/test-servers.yaml | ./src/llmclient.py
+cat ./sample/conf-mcpServers/test-servers.yaml | sed 's/transport: http/transport: streamable_http/g' | ./src/llmclient.py
+```
+
+## Test all features:
+
+```bash
+
+# boot test environment (containers).
+make start
+
+# below should be operated in mcp-gateway container
+
+# boot MCP server with REST to MCP Gateway
+cat ./sample/openapi-specs/ghec-get-org-pruned-openapi31-validated.json | ./src/mcp-gateway.py -b https://api.github.com -port 8888 -l /mcp/
+
+# boot MCP server
+fastmcp run --server-spec ./sample/mcp-servers/echo.py  --transport http --host 0.0.0.0 --port 8890 --path /mcp/
+
+# boot mashup server all-in-one, with MCP to MCP Gateway
+cat ./sample/conf-mcpServers/test-servers.yaml | ./src/double-mcp-gateway.py --port 8889 -l /mcp/
+
+# test with client
+cat ./sample/conf-mcpServers/test-servers.yaml  | sed 's/transport: http/transport: streamable_http/g' | ./src/llmclient.py
+```
+
+ - then access MCP Inspector with your browser ( i.e. http://${myIP}:3000/?MCP_PROXY_PORT=3001 )
+ - setup MCP Inspector as below to interacts with the above features:
+
+```
+- URL:             http://${myIP}:8889/mcp/
+- Transport:       Stremable HTTP
+- Connection Type: Via Proxy
+
+- Configuration:
+   - Inspector Proxy Address: http://${myIP}:3001
 ```
