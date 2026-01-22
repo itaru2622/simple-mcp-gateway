@@ -111,7 +111,7 @@ make start
 # below should be operated in mcp-gateway container
 
 # boot MCP server with REST to MCP Gateway
-cat ./sample/openapi-specs/ghec-get-org-pruned-openapi31-validated.json | ./src/mcp-gateway.py -b https://api.github.com -port 8888 -l /mcp/
+cat ./sample/openapi-specs/ghec-get-org-pruned-openapi31-validated.json | ./src/mcp-gateway.py -b https://api.github.com --port 8888 -l /mcp/
 
 # boot MCP server
 fastmcp run --server-spec ./sample/mcp-servers/echo.py  --transport http --host 0.0.0.0 --port 8890 --path /mcp/
