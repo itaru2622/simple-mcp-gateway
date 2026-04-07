@@ -47,8 +47,11 @@ options:
 ```
 
 ```bash
-# example:
+# example for open REST service( no credential ):
 cat sample/openapi-specs/ghec-get-org-pruned-openapi31-validated.json | ./src/mcp-gateway.py -b https://api.github.com
+
+# example for REST service with credential
+cat sample/openapi-specs/ghec-get-org-pruned-openapi31-validated.json | ./src/mcp-gateway.py -b https://api.github.com -a YOUR_GITHUB_PAT
 ```
 
 
@@ -110,8 +113,12 @@ make start
 
 # below should be operated in mcp-gateway container
 
-# boot MCP server with REST to MCP Gateway
+# boot MCP server with REST to MCP Gateway (for public spaces)
 cat ./sample/openapi-specs/ghec-get-org-pruned-openapi31-validated.json | ./src/mcp-gateway.py -b https://api.github.com --port 8888 -l /mcp/
+
+# boot MCP server with REST to MCP Gateway (with public and authorized spaces)
+# Note this case has some security risk by proxying public/open <=> authorized space
+# cat ./sample/openapi-specs/ghec-get-org-pruned-openapi31-validated.json | ./src/mcp-gateway.py -b https://api.github.com --port 8888 -l /mcp/ -a YOUR_GITHUB_PAT
 
 # boot MCP server
 fastmcp run --server-spec ./sample/mcp-servers/echo.py  --transport http --host 0.0.0.0 --port 8890 --path /mcp/
