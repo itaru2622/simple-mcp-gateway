@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 
+# starts workaround : add  code to ignore warning
+import warnings
+warnings.filterwarnings("ignore", message=".*Pydantic V1 functionality isn't compatible with.*")
+# ends workaround : add  code to ignore warning
+
 from   langchain_mcp_adapters.client import MultiServerMCPClient
 #from   langchain_openai import AzureChatOpenAI
 #from   langgraph.prebuilt import create_react_agent
