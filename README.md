@@ -1,16 +1,17 @@
-# MCP Gateways/Client
+# mcp-gateway
+
+provides:
+ - codes for MCP Gateways (MCP<=>REST, MCP<=>MCP)
+ - Sample codes for MCP Client to access MCP Gateway.
+ - Containsers for exuting and testing
+     - Runtime env       to execute MCP gateways
+     - MCP Inspector     to test/debug MCP gateways.
+     - Swagger UI/Editor to test/debug OpenAPI spec for developing MCP<=>REST Gateway
 
 pre-required:
  - docker, docker-compose
 
-provides:
- - Sample codes for MCP Gateways (REST<=>MCP, MCP<=>MCP)
- - Containsers
-     - Runtime env       to execute MCP gateways
-     - MCP Inspector     to test/debug MCP gateways.
-     - Swagger UI/Editor to test/debug OpenAPI spec.
-
-thanks to fastmcp (https://github.com/jlowin/fastmcp).
+thanks to fastmcp (https://github.com/PrefectHQ/fastmcp).
 
 ## basic use
 
@@ -24,7 +25,7 @@ make bash
 # use following tools...
 ```
 
-## REST to MCP Gateway
+## Gateway (MCP <=> REST)
 
 - source: src/mcp-gateway.py
 - input:  OpenAPI spec file ( openapi v3.0 or 3.1), required json schema friendly format.
@@ -47,15 +48,16 @@ options:
 ```
 
 ```bash
-# example for open REST service( no credential ):
+# example for REST service ( public/open area without auth ):
 cat sample/openapi-specs/ghec-get-org-pruned-openapi31-validated.json | ./src/mcp-gateway.py -b https://api.github.com
 
-# example for REST service with credential
+# example for REST service with auth
 cat sample/openapi-specs/ghec-get-org-pruned-openapi31-validated.json | ./src/mcp-gateway.py -b https://api.github.com -a YOUR_GITHUB_PAT
+# Note this case has some security risk by proxying public/open <=> authorized space
 ```
 
 
-## MCP to MCP Gateway
+## Gateway (MCP <=> MCP)
 
 - source: src/double-mcp-gateway.py
 - input:  MCP Server config
