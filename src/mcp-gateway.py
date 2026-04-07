@@ -11,8 +11,7 @@
 #
 
 from fastmcp import FastMCP
-from fastmcp.server.openapi import ( FastMCPOpenAPI, RouteMap, MCPType,)
-from fastmcp.experimental.server.openapi import RouteMap, MCPType
+from fastmcp.server.providers.openapi import (RouteMap, MCPType)
 from typing import Any
 import httpx
 import yaml
