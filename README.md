@@ -110,10 +110,16 @@ cat ./sample/conf-mcpServers/test-servers.yaml | sed 's/transport: http/transpor
 
 ```bash
 
+# check/detect myIP to use.
+make echo
+
 # boot test environment (containers).
 make start
 
-# below should be operated in mcp-gateway container
+# login to bash in container
+make bash
+
+# all below commands should be operated in mcp-gateway container
 
 # boot MCP server with REST to MCP Gateway (for public spaces)
 cat ./sample/openapi-specs/ghec-get-org-pruned-openapi31-validated.json | ./src/mcp-gateway.py -b https://api.github.com --port 8888 -l /mcp/
