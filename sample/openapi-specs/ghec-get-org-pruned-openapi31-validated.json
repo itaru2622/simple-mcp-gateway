@@ -1,5 +1,5 @@
 # validated openapi spec for FastMCPOpenAPI, generated from github openapi spec
-# refer:  https://github.com/jlowin/fastmcp/issues/1271#issuecomment-3136393638
+# refer:  https://github.com/PrefectHQ/fastmcp/issues/1271#issuecomment-3136393638
 {
   "openapi": "3.1.0",
   "info": {
@@ -20,7 +20,11 @@
   "tags": [
     {
       "name": "orgs",
-      "description": "Interact with GitHub Orgs."
+      "description": "Interact with organizations."
+    },
+    {
+      "name": "repos",
+      "description": "Interact with GitHub Repos."
     }
   ],
   "servers": [
@@ -32,9 +36,279 @@
     "description": "GitHub Enterprise Cloud REST API",
     "url": "https://docs.github.com/enterprise-cloud@latest/rest/"
   },
+  "paths": {
+    "/orgs/{org}": {
+      "get": {
+        "summary": "Get an organization",
+        "description": "Gets information about an organization.\n\nWhen the value of `two_factor_requirement_enabled` is `true`, the organization requires all members, billing managers, outside collaborators, guest collaborators, repository collaborators, or everyone with access to any repository within the organization to enable [two-factor authentication](https://docs.github.com/enterprise-cloud@latest//articles/securing-your-account-with-two-factor-authentication-2fa/).\n\nTo see the full details about an organization, the authenticated user must be an organization owner.\n\nOAuth app tokens and personal access tokens (classic) need the `admin:org` scope to see the full details about an organization.\n\nTo see information about an organization's GitHub Enterprise Cloud plan, GitHub Apps need the `Organization plan` permission.",
+        "tags": [
+          "orgs"
+        ],
+        "operationId": "orgs/get",
+        "externalDocs": {
+          "description": "API method documentation",
+          "url": "https://docs.github.com/enterprise-cloud@latest//rest/orgs/orgs#get-an-organization"
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/org"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/organization-full"
+                },
+                "examples": {
+                  "default-response": {
+                    "$ref": "#/components/examples/organization-full"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/not_found"
+          }
+        },
+        "x-github": {
+          "githubCloudOnly": false,
+          "enabledForGitHubApps": true,
+          "category": "orgs",
+          "subcategory": "orgs"
+        }
+      }
+    },
+    "/repos/{owner}/{repo}": {
+      "get": {
+        "summary": "Get a repository",
+        "description": "The `parent` and `source` objects are present when the repository is a fork. `parent` is the repository this repository was forked from, `source` is the ultimate source for the network.\n\n> [!NOTE]\n> - In order to see the `security_and_analysis` block for a repository you must have admin permissions for the repository or be an owner or security manager for the organization that owns the repository. For more information, see \"[Managing security managers in your organization](https://docs.github.com/enterprise-cloud@latest//organizations/managing-peoples-access-to-your-organization-with-roles/managing-security-managers-in-your-organization).\"\n> - To view merge-related settings, you must have the `contents:read` and `contents:write` permissions.",
+        "tags": [
+          "repos"
+        ],
+        "operationId": "repos/get",
+        "externalDocs": {
+          "description": "API method documentation",
+          "url": "https://docs.github.com/enterprise-cloud@latest//rest/repos/repos#get-a-repository"
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/owner"
+          },
+          {
+            "$ref": "#/components/parameters/repo"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/full-repository"
+                },
+                "examples": {
+                  "default-response": {
+                    "$ref": "#/components/examples/full-repository-default-response"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/not_found"
+          },
+          "301": {
+            "$ref": "#/components/responses/moved_permanently"
+          }
+        },
+        "x-github": {
+          "githubCloudOnly": false,
+          "enabledForGitHubApps": true,
+          "category": "repos",
+          "subcategory": "repos"
+        }
+      }
+    }
+  },
   "components": {
     "schemas": {
+      "simple-user": {
+        "title": "Simple User",
+        "description": "A GitHub user.",
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "email": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "login": {
+            "type": "string",
+            "examples": [
+              "octocat"
+            ]
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "examples": [
+              1
+            ]
+          },
+          "node_id": {
+            "type": "string",
+            "examples": [
+              "MDQ6VXNlcjE="
+            ]
+          },
+          "avatar_url": {
+            "type": "string",
+            "format": "uri",
+            "examples": [
+              "https://github.com/images/error/octocat_happy.gif"
+            ]
+          },
+          "gravatar_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "examples": [
+              "41d064eb2195891e12d0413f63227ea7"
+            ]
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "examples": [
+              "https://api.github.com/users/octocat"
+            ]
+          },
+          "html_url": {
+            "type": "string",
+            "format": "uri",
+            "examples": [
+              "https://github.com/octocat"
+            ]
+          },
+          "followers_url": {
+            "type": "string",
+            "format": "uri",
+            "examples": [
+              "https://api.github.com/users/octocat/followers"
+            ]
+          },
+          "following_url": {
+            "type": "string",
+            "examples": [
+              "https://api.github.com/users/octocat/following{/other_user}"
+            ]
+          },
+          "gists_url": {
+            "type": "string",
+            "examples": [
+              "https://api.github.com/users/octocat/gists{/gist_id}"
+            ]
+          },
+          "starred_url": {
+            "type": "string",
+            "examples": [
+              "https://api.github.com/users/octocat/starred{/owner}{/repo}"
+            ]
+          },
+          "subscriptions_url": {
+            "type": "string",
+            "format": "uri",
+            "examples": [
+              "https://api.github.com/users/octocat/subscriptions"
+            ]
+          },
+          "organizations_url": {
+            "type": "string",
+            "format": "uri",
+            "examples": [
+              "https://api.github.com/users/octocat/orgs"
+            ]
+          },
+          "repos_url": {
+            "type": "string",
+            "format": "uri",
+            "examples": [
+              "https://api.github.com/users/octocat/repos"
+            ]
+          },
+          "events_url": {
+            "type": "string",
+            "examples": [
+              "https://api.github.com/users/octocat/events{/privacy}"
+            ]
+          },
+          "received_events_url": {
+            "type": "string",
+            "format": "uri",
+            "examples": [
+              "https://api.github.com/users/octocat/received_events"
+            ]
+          },
+          "type": {
+            "type": "string",
+            "examples": [
+              "User"
+            ]
+          },
+          "site_admin": {
+            "type": "boolean"
+          },
+          "starred_at": {
+            "type": "string",
+            "examples": [
+              "\"2020-07-09T00:17:55Z\""
+            ]
+          },
+          "user_view_type": {
+            "type": "string",
+            "examples": [
+              "public"
+            ]
+          }
+        },
+        "required": [
+          "avatar_url",
+          "events_url",
+          "followers_url",
+          "following_url",
+          "gists_url",
+          "gravatar_id",
+          "html_url",
+          "id",
+          "node_id",
+          "login",
+          "organizations_url",
+          "received_events_url",
+          "repos_url",
+          "site_admin",
+          "starred_url",
+          "subscriptions_url",
+          "type",
+          "url"
+        ]
+      },
       "basic-error": {
+        "title": "Basic Error",
         "description": "Basic Error",
         "type": "object",
         "properties": {
@@ -52,7 +326,1087 @@
           }
         }
       },
+      "license-simple": {
+        "title": "License Simple",
+        "description": "License Simple",
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "examples": [
+              "mit"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "examples": [
+              "MIT License"
+            ]
+          },
+          "url": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uri",
+            "examples": [
+              "https://api.github.com/licenses/mit"
+            ]
+          },
+          "spdx_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "examples": [
+              "MIT"
+            ]
+          },
+          "node_id": {
+            "type": "string",
+            "examples": [
+              "MDc6TGljZW5zZW1pdA=="
+            ]
+          },
+          "html_url": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "required": [
+          "key",
+          "name",
+          "url",
+          "spdx_id",
+          "node_id"
+        ]
+      },
+      "repository": {
+        "title": "Repository",
+        "description": "A repository on GitHub.",
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "Unique identifier of the repository",
+            "type": "integer",
+            "format": "int64",
+            "examples": [
+              42
+            ]
+          },
+          "node_id": {
+            "type": "string",
+            "examples": [
+              "MDEwOlJlcG9zaXRvcnkxMjk2MjY5"
+            ]
+          },
+          "name": {
+            "description": "The name of the repository.",
+            "type": "string",
+            "examples": [
+              "Team Environment"
+            ]
+          },
+          "full_name": {
+            "type": "string",
+            "examples": [
+              "octocat/Hello-World"
+            ]
+          },
+          "license": {
+            "anyOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/license-simple"
+              }
+            ]
+          },
+          "forks": {
+            "type": "integer"
+          },
+          "permissions": {
+            "type": "object",
+            "properties": {
+              "admin": {
+                "type": "boolean"
+              },
+              "pull": {
+                "type": "boolean"
+              },
+              "triage": {
+                "type": "boolean"
+              },
+              "push": {
+                "type": "boolean"
+              },
+              "maintain": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "admin",
+              "pull",
+              "push"
+            ]
+          },
+          "owner": {
+            "$ref": "#/components/schemas/simple-user"
+          },
+          "private": {
+            "description": "Whether the repository is private or public.",
+            "default": false,
+            "type": "boolean"
+          },
+          "html_url": {
+            "type": "string",
+            "format": "uri",
+            "examples": [
+              "https://github.com/octocat/Hello-World"
+            ]
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "examples": [
+              "This your first repo!"
+            ]
+          },
+          "fork": {
+            "type": "boolean"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "examples": [
+              "https://api.github.com/repos/octocat/Hello-World"
+            ]
+          },
+          "archive_url": {
+            "type": "string",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/{archive_format}{/ref}"
+            ]
+          },
+          "assignees_url": {
+            "type": "string",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/assignees{/user}"
+            ]
+          },
+          "blobs_url": {
+            "type": "string",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/git/blobs{/sha}"
+            ]
+          },
+          "branches_url": {
+            "type": "string",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/branches{/branch}"
+            ]
+          },
+          "collaborators_url": {
+            "type": "string",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/collaborators{/collaborator}"
+            ]
+          },
+          "comments_url": {
+            "type": "string",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/comments{/number}"
+            ]
+          },
+          "commits_url": {
+            "type": "string",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/commits{/sha}"
+            ]
+          },
+          "compare_url": {
+            "type": "string",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/compare/{base}...{head}"
+            ]
+          },
+          "contents_url": {
+            "type": "string",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/contents/{+path}"
+            ]
+          },
+          "contributors_url": {
+            "type": "string",
+            "format": "uri",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/contributors"
+            ]
+          },
+          "deployments_url": {
+            "type": "string",
+            "format": "uri",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/deployments"
+            ]
+          },
+          "downloads_url": {
+            "type": "string",
+            "format": "uri",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/downloads"
+            ]
+          },
+          "events_url": {
+            "type": "string",
+            "format": "uri",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/events"
+            ]
+          },
+          "forks_url": {
+            "type": "string",
+            "format": "uri",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/forks"
+            ]
+          },
+          "git_commits_url": {
+            "type": "string",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/git/commits{/sha}"
+            ]
+          },
+          "git_refs_url": {
+            "type": "string",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/git/refs{/sha}"
+            ]
+          },
+          "git_tags_url": {
+            "type": "string",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/git/tags{/sha}"
+            ]
+          },
+          "git_url": {
+            "type": "string",
+            "examples": [
+              "git:github.com/octocat/Hello-World.git"
+            ]
+          },
+          "issue_comment_url": {
+            "type": "string",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/issues/comments{/number}"
+            ]
+          },
+          "issue_events_url": {
+            "type": "string",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/issues/events{/number}"
+            ]
+          },
+          "issues_url": {
+            "type": "string",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/issues{/number}"
+            ]
+          },
+          "keys_url": {
+            "type": "string",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/keys{/key_id}"
+            ]
+          },
+          "labels_url": {
+            "type": "string",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/labels{/name}"
+            ]
+          },
+          "languages_url": {
+            "type": "string",
+            "format": "uri",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/languages"
+            ]
+          },
+          "merges_url": {
+            "type": "string",
+            "format": "uri",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/merges"
+            ]
+          },
+          "milestones_url": {
+            "type": "string",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/milestones{/number}"
+            ]
+          },
+          "notifications_url": {
+            "type": "string",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/notifications{?since,all,participating}"
+            ]
+          },
+          "pulls_url": {
+            "type": "string",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/pulls{/number}"
+            ]
+          },
+          "releases_url": {
+            "type": "string",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/releases{/id}"
+            ]
+          },
+          "ssh_url": {
+            "type": "string",
+            "examples": [
+              "git@github.com:octocat/Hello-World.git"
+            ]
+          },
+          "stargazers_url": {
+            "type": "string",
+            "format": "uri",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/stargazers"
+            ]
+          },
+          "statuses_url": {
+            "type": "string",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/statuses/{sha}"
+            ]
+          },
+          "subscribers_url": {
+            "type": "string",
+            "format": "uri",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/subscribers"
+            ]
+          },
+          "subscription_url": {
+            "type": "string",
+            "format": "uri",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/subscription"
+            ]
+          },
+          "tags_url": {
+            "type": "string",
+            "format": "uri",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/tags"
+            ]
+          },
+          "teams_url": {
+            "type": "string",
+            "format": "uri",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/teams"
+            ]
+          },
+          "trees_url": {
+            "type": "string",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/git/trees{/sha}"
+            ]
+          },
+          "clone_url": {
+            "type": "string",
+            "examples": [
+              "https://github.com/octocat/Hello-World.git"
+            ]
+          },
+          "mirror_url": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uri",
+            "examples": [
+              "git:git.example.com/octocat/Hello-World"
+            ]
+          },
+          "hooks_url": {
+            "type": "string",
+            "format": "uri",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/hooks"
+            ]
+          },
+          "svn_url": {
+            "type": "string",
+            "format": "uri",
+            "examples": [
+              "https://svn.github.com/octocat/Hello-World"
+            ]
+          },
+          "homepage": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uri",
+            "examples": [
+              "https://github.com"
+            ]
+          },
+          "language": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "forks_count": {
+            "type": "integer",
+            "examples": [
+              9
+            ]
+          },
+          "stargazers_count": {
+            "type": "integer",
+            "examples": [
+              80
+            ]
+          },
+          "watchers_count": {
+            "type": "integer",
+            "examples": [
+              80
+            ]
+          },
+          "size": {
+            "description": "The size of the repository, in kilobytes. Size is calculated hourly. When a repository is initially created, the size is 0.",
+            "type": "integer",
+            "examples": [
+              108
+            ]
+          },
+          "default_branch": {
+            "description": "The default branch of the repository.",
+            "type": "string",
+            "examples": [
+              "master"
+            ]
+          },
+          "open_issues_count": {
+            "type": "integer",
+            "examples": [
+              0
+            ]
+          },
+          "is_template": {
+            "description": "Whether this repository acts as a template that can be used to generate new repositories.",
+            "default": false,
+            "type": "boolean",
+            "examples": [
+              true
+            ]
+          },
+          "topics": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "has_issues": {
+            "description": "Whether issues are enabled.",
+            "default": true,
+            "type": "boolean",
+            "examples": [
+              true
+            ]
+          },
+          "has_projects": {
+            "description": "Whether projects are enabled.",
+            "default": true,
+            "type": "boolean",
+            "examples": [
+              true
+            ]
+          },
+          "has_wiki": {
+            "description": "Whether the wiki is enabled.",
+            "default": true,
+            "type": "boolean",
+            "examples": [
+              true
+            ]
+          },
+          "has_pages": {
+            "type": "boolean"
+          },
+          "has_downloads": {
+            "description": "Whether downloads are enabled.",
+            "default": true,
+            "type": "boolean",
+            "deprecated": true,
+            "examples": [
+              true
+            ]
+          },
+          "has_discussions": {
+            "description": "Whether discussions are enabled.",
+            "default": false,
+            "type": "boolean",
+            "examples": [
+              true
+            ]
+          },
+          "has_pull_requests": {
+            "description": "Whether pull requests are enabled.",
+            "default": true,
+            "type": "boolean",
+            "examples": [
+              true
+            ]
+          },
+          "pull_request_creation_policy": {
+            "description": "The policy controlling who can create pull requests: all or collaborators_only.",
+            "type": "string",
+            "enum": [
+              "all",
+              "collaborators_only"
+            ],
+            "examples": [
+              "all"
+            ]
+          },
+          "archived": {
+            "description": "Whether the repository is archived.",
+            "default": false,
+            "type": "boolean"
+          },
+          "disabled": {
+            "type": "boolean",
+            "description": "Returns whether or not this repository disabled."
+          },
+          "visibility": {
+            "description": "The repository visibility: public, private, or internal.",
+            "default": "public",
+            "type": "string"
+          },
+          "pushed_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "examples": [
+              "2011-01-26T19:06:43Z"
+            ]
+          },
+          "created_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "examples": [
+              "2011-01-26T19:01:12Z"
+            ]
+          },
+          "updated_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "examples": [
+              "2011-01-26T19:14:43Z"
+            ]
+          },
+          "allow_rebase_merge": {
+            "description": "Whether to allow rebase merges for pull requests.",
+            "default": true,
+            "type": "boolean",
+            "examples": [
+              true
+            ]
+          },
+          "temp_clone_token": {
+            "type": "string"
+          },
+          "allow_squash_merge": {
+            "description": "Whether to allow squash merges for pull requests.",
+            "default": true,
+            "type": "boolean",
+            "examples": [
+              true
+            ]
+          },
+          "allow_auto_merge": {
+            "description": "Whether to allow Auto-merge to be used on pull requests.",
+            "default": false,
+            "type": "boolean",
+            "examples": [
+              false
+            ]
+          },
+          "delete_branch_on_merge": {
+            "description": "Whether to delete head branches when pull requests are merged",
+            "default": false,
+            "type": "boolean",
+            "examples": [
+              false
+            ]
+          },
+          "allow_update_branch": {
+            "description": "Whether or not a pull request head branch that is behind its base branch can always be updated even if it is not required to be up to date before merging.",
+            "default": false,
+            "type": "boolean",
+            "examples": [
+              false
+            ]
+          },
+          "use_squash_pr_title_as_default": {
+            "type": "boolean",
+            "description": "Whether a squash merge commit can use the pull request title as default. **This property is closing down. Please use `squash_merge_commit_title` instead.",
+            "default": false,
+            "deprecated": true
+          },
+          "squash_merge_commit_title": {
+            "type": "string",
+            "enum": [
+              "PR_TITLE",
+              "COMMIT_OR_PR_TITLE"
+            ],
+            "description": "The default value for a squash merge commit title:\n\n- `PR_TITLE` - default to the pull request's title.\n- `COMMIT_OR_PR_TITLE` - default to the commit's title (if only one commit) or the pull request's title (when more than one commit)."
+          },
+          "squash_merge_commit_message": {
+            "type": "string",
+            "enum": [
+              "PR_BODY",
+              "COMMIT_MESSAGES",
+              "BLANK"
+            ],
+            "description": "The default value for a squash merge commit message:\n\n- `PR_BODY` - default to the pull request's body.\n- `COMMIT_MESSAGES` - default to the branch's commit messages.\n- `BLANK` - default to a blank commit message."
+          },
+          "merge_commit_title": {
+            "type": "string",
+            "enum": [
+              "PR_TITLE",
+              "MERGE_MESSAGE"
+            ],
+            "description": "The default value for a merge commit title.\n\n- `PR_TITLE` - default to the pull request's title.\n- `MERGE_MESSAGE` - default to the classic title for a merge message (e.g., Merge pull request #123 from branch-name)."
+          },
+          "merge_commit_message": {
+            "type": "string",
+            "enum": [
+              "PR_BODY",
+              "PR_TITLE",
+              "BLANK"
+            ],
+            "description": "The default value for a merge commit message.\n\n- `PR_TITLE` - default to the pull request's title.\n- `PR_BODY` - default to the pull request's body.\n- `BLANK` - default to a blank commit message."
+          },
+          "allow_merge_commit": {
+            "description": "Whether to allow merge commits for pull requests.",
+            "default": true,
+            "type": "boolean",
+            "examples": [
+              true
+            ]
+          },
+          "allow_forking": {
+            "description": "Whether to allow forking this repo",
+            "type": "boolean"
+          },
+          "web_commit_signoff_required": {
+            "description": "Whether to require contributors to sign off on web-based commits",
+            "default": false,
+            "type": "boolean"
+          },
+          "open_issues": {
+            "type": "integer"
+          },
+          "watchers": {
+            "type": "integer"
+          },
+          "master_branch": {
+            "type": "string"
+          },
+          "starred_at": {
+            "type": "string",
+            "examples": [
+              "\"2020-07-09T00:17:42Z\""
+            ]
+          },
+          "anonymous_access_enabled": {
+            "type": "boolean",
+            "description": "Whether anonymous git access is enabled for this repository"
+          },
+          "code_search_index_status": {
+            "type": "object",
+            "description": "The status of the code search index for this repository",
+            "properties": {
+              "lexical_search_ok": {
+                "type": "boolean"
+              },
+              "lexical_commit_sha": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "required": [
+          "archive_url",
+          "assignees_url",
+          "blobs_url",
+          "branches_url",
+          "collaborators_url",
+          "comments_url",
+          "commits_url",
+          "compare_url",
+          "contents_url",
+          "contributors_url",
+          "deployments_url",
+          "description",
+          "downloads_url",
+          "events_url",
+          "fork",
+          "forks_url",
+          "full_name",
+          "git_commits_url",
+          "git_refs_url",
+          "git_tags_url",
+          "hooks_url",
+          "html_url",
+          "id",
+          "node_id",
+          "issue_comment_url",
+          "issue_events_url",
+          "issues_url",
+          "keys_url",
+          "labels_url",
+          "languages_url",
+          "merges_url",
+          "milestones_url",
+          "name",
+          "notifications_url",
+          "owner",
+          "private",
+          "pulls_url",
+          "releases_url",
+          "stargazers_url",
+          "statuses_url",
+          "subscribers_url",
+          "subscription_url",
+          "tags_url",
+          "teams_url",
+          "trees_url",
+          "url",
+          "clone_url",
+          "default_branch",
+          "forks",
+          "forks_count",
+          "git_url",
+          "has_downloads",
+          "has_issues",
+          "has_projects",
+          "has_wiki",
+          "has_pages",
+          "homepage",
+          "language",
+          "archived",
+          "disabled",
+          "mirror_url",
+          "open_issues",
+          "open_issues_count",
+          "license",
+          "pushed_at",
+          "size",
+          "ssh_url",
+          "stargazers_count",
+          "svn_url",
+          "watchers",
+          "watchers_count",
+          "created_at",
+          "updated_at"
+        ],
+        "x-github-breaking-changes": [
+          {
+            "changeset": "remove_use_squash_pr_title_as_default",
+            "patch": {
+              "properties": {
+                "use_squash_pr_title_as_default": null
+              }
+            },
+            "version": "2026-03-10"
+          },
+          {
+            "changeset": "deprecate_beta_media_type",
+            "patch": {
+              "properties": {
+                "master_branch": null
+              }
+            },
+            "version": "2026-03-10"
+          },
+          {
+            "changeset": "remove_has_downloads",
+            "patch": {
+              "properties": {
+                "has_downloads": null
+              },
+              "required": [
+                "archive_url",
+                "assignees_url",
+                "blobs_url",
+                "branches_url",
+                "collaborators_url",
+                "comments_url",
+                "commits_url",
+                "compare_url",
+                "contents_url",
+                "contributors_url",
+                "deployments_url",
+                "description",
+                "downloads_url",
+                "events_url",
+                "fork",
+                "forks_url",
+                "full_name",
+                "git_commits_url",
+                "git_refs_url",
+                "git_tags_url",
+                "hooks_url",
+                "html_url",
+                "id",
+                "node_id",
+                "issue_comment_url",
+                "issue_events_url",
+                "issues_url",
+                "keys_url",
+                "labels_url",
+                "languages_url",
+                "merges_url",
+                "milestones_url",
+                "name",
+                "notifications_url",
+                "owner",
+                "private",
+                "pulls_url",
+                "releases_url",
+                "stargazers_url",
+                "statuses_url",
+                "subscribers_url",
+                "subscription_url",
+                "tags_url",
+                "teams_url",
+                "trees_url",
+                "url",
+                "clone_url",
+                "default_branch",
+                "forks",
+                "forks_count",
+                "git_url",
+                "has_issues",
+                "has_projects",
+                "has_wiki",
+                "has_pages",
+                "homepage",
+                "language",
+                "archived",
+                "disabled",
+                "mirror_url",
+                "open_issues",
+                "open_issues_count",
+                "license",
+                "pushed_at",
+                "size",
+                "ssh_url",
+                "stargazers_count",
+                "svn_url",
+                "watchers",
+                "watchers_count",
+                "created_at",
+                "updated_at"
+              ]
+            },
+            "version": "2026-03-10"
+          }
+        ]
+      },
+      "security-and-analysis": {
+        "type": [
+          "object",
+          "null"
+        ],
+        "properties": {
+          "advanced_security": {
+            "description": "Enable or disable GitHub Advanced Security for the repository.\n\nFor standalone Code Scanning or Secret Protection products, this parameter cannot be used.\n",
+            "type": "object",
+            "properties": {
+              "status": {
+                "type": "string",
+                "enum": [
+                  "enabled",
+                  "disabled"
+                ]
+              }
+            }
+          },
+          "code_security": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "type": "string",
+                "enum": [
+                  "enabled",
+                  "disabled"
+                ]
+              }
+            }
+          },
+          "dependabot_security_updates": {
+            "description": "Enable or disable Dependabot security updates for the repository.",
+            "type": "object",
+            "properties": {
+              "status": {
+                "description": "The enablement status of Dependabot security updates for the repository.",
+                "type": "string",
+                "enum": [
+                  "enabled",
+                  "disabled"
+                ]
+              }
+            }
+          },
+          "secret_scanning": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "type": "string",
+                "enum": [
+                  "enabled",
+                  "disabled"
+                ]
+              }
+            }
+          },
+          "secret_scanning_push_protection": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "type": "string",
+                "enum": [
+                  "enabled",
+                  "disabled"
+                ]
+              }
+            }
+          },
+          "secret_scanning_non_provider_patterns": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "type": "string",
+                "enum": [
+                  "enabled",
+                  "disabled"
+                ]
+              }
+            }
+          },
+          "secret_scanning_ai_detection": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "type": "string",
+                "enum": [
+                  "enabled",
+                  "disabled"
+                ]
+              }
+            }
+          },
+          "secret_scanning_validity_checks": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "type": "string",
+                "enum": [
+                  "enabled",
+                  "disabled"
+                ]
+              }
+            }
+          },
+          "secret_scanning_delegated_alert_dismissal": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "type": "string",
+                "enum": [
+                  "enabled",
+                  "disabled"
+                ]
+              }
+            }
+          },
+          "secret_scanning_delegated_bypass": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "type": "string",
+                "enum": [
+                  "enabled",
+                  "disabled"
+                ]
+              }
+            }
+          },
+          "secret_scanning_delegated_bypass_options": {
+            "type": "object",
+            "properties": {
+              "reviewers": {
+                "type": "array",
+                "description": "The bypass reviewers for secret scanning delegated bypass",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "reviewer_id",
+                    "reviewer_type"
+                  ],
+                  "properties": {
+                    "reviewer_id": {
+                      "type": "integer",
+                      "description": "The ID of the team or role selected as a bypass reviewer"
+                    },
+                    "reviewer_type": {
+                      "type": "string",
+                      "description": "The type of the bypass reviewer",
+                      "enum": [
+                        "TEAM",
+                        "ROLE"
+                      ]
+                    },
+                    "mode": {
+                      "type": "string",
+                      "description": "The bypass mode for the reviewer",
+                      "enum": [
+                        "ALWAYS",
+                        "EXEMPT"
+                      ],
+                      "default": "ALWAYS"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       "organization-full": {
+        "title": "Organization Full",
         "description": "Prevents users in the organization from using insecure methods of two-factor authentication to fulfill a two-factor requirement.\nRemoves non-compliant outside collaborators from the organization and its repositories.\n\nGitHub currently defines SMS as an insecure method of two-factor authentication.\n\nIf your users are managed by the enterprise this policy will not affect them. The first admin account of the enterprise will still be affected.",
         "type": "object",
         "properties": {
@@ -141,10 +1495,7 @@
             ]
           },
           "company": {
-            "type": [
-              "string",
-              "null"
-            ],
+            "type": [ "string", "null" ],
             "examples": [
               "GitHub"
             ]
@@ -157,19 +1508,13 @@
             ]
           },
           "location": {
-            "type": [
-              "string",
-              "null"
-            ],
+            "type": [ "string", "null" ],
             "examples": [
               "San Francisco"
             ]
           },
           "email": {
-            "type": [
-              "string",
-              "null"
-            ],
+            "type": [ "string", "null" ],
             "format": "email",
             "examples": [
               "octocat@github.com"
@@ -458,42 +1803,48 @@
             "description": "**Endpoint closing down notice.** Please use [code security configurations](https://docs.github.com/enterprise-cloud@latest//rest/code-security/configurations) instead.\n\nWhether GitHub Advanced Security is enabled for new repositories and repositories transferred to this organization.\n\nThis field is only visible to organization owners or members of a team with the security manager role.",
             "examples": [
               false
-            ]
+            ],
+            "deprecated": true
           },
           "dependabot_alerts_enabled_for_new_repositories": {
             "type": "boolean",
             "description": "**Endpoint closing down notice.** Please use [code security configurations](https://docs.github.com/enterprise-cloud@latest//rest/code-security/configurations) instead.\n\nWhether Dependabot alerts are automatically enabled for new repositories and repositories transferred to this organization.\n\nThis field is only visible to organization owners or members of a team with the security manager role.",
             "examples": [
               false
-            ]
+            ],
+            "deprecated": true
           },
           "dependabot_security_updates_enabled_for_new_repositories": {
             "type": "boolean",
             "description": "**Endpoint closing down notice.** Please use [code security configurations](https://docs.github.com/enterprise-cloud@latest//rest/code-security/configurations) instead.\n\nWhether Dependabot security updates are automatically enabled for new repositories and repositories transferred to this organization.\n\nThis field is only visible to organization owners or members of a team with the security manager role.",
             "examples": [
               false
-            ]
+            ],
+            "deprecated": true
           },
           "dependency_graph_enabled_for_new_repositories": {
             "type": "boolean",
             "description": "**Endpoint closing down notice.** Please use [code security configurations](https://docs.github.com/enterprise-cloud@latest//rest/code-security/configurations) instead.\n\nWhether dependency graph is automatically enabled for new repositories and repositories transferred to this organization.\n\nThis field is only visible to organization owners or members of a team with the security manager role.",
             "examples": [
               false
-            ]
+            ],
+            "deprecated": true
           },
           "secret_scanning_enabled_for_new_repositories": {
             "type": "boolean",
             "description": "**Endpoint closing down notice.** Please use [code security configurations](https://docs.github.com/enterprise-cloud@latest//rest/code-security/configurations) instead.\n\nWhether secret scanning is automatically enabled for new repositories and repositories transferred to this organization.\n\nThis field is only visible to organization owners or members of a team with the security manager role.",
             "examples": [
               false
-            ]
+            ],
+            "deprecated": true
           },
           "secret_scanning_push_protection_enabled_for_new_repositories": {
             "type": "boolean",
             "description": "**Endpoint closing down notice.** Please use [code security configurations](https://docs.github.com/enterprise-cloud@latest//rest/code-security/configurations) instead.\n\nWhether secret scanning push protection is automatically enabled for new repositories and repositories transferred to this organization.\n\nThis field is only visible to organization owners or members of a team with the security manager role.",
             "examples": [
               false
-            ]
+            ],
+            "deprecated": true
           },
           "secret_scanning_push_protection_custom_link_enabled": {
             "type": "boolean",
@@ -517,7 +1868,8 @@
             "description": "**Endpoint closing down notice.** Please use [code security configurations](https://docs.github.com/enterprise-cloud@latest//rest/code-security/configurations) instead.\n\nWhether secret scanning automatic validity checks on supported partner tokens is enabled for all repositories under this organization.",
             "examples": [
               false
-            ]
+            ],
+            "deprecated": true
           },
           "created_at": {
             "type": "string",
@@ -569,6 +1921,848 @@
           "created_at",
           "updated_at",
           "archived_at"
+        ],
+        "x-github-breaking-changes": [
+          {
+            "changeset": "remove_secret_scanning_custom_link_enablement_field",
+            "patch": [
+              {
+                "op": "remove",
+                "path": "/properties/secret_scanning_push_protection_custom_link_enabled"
+              }
+            ],
+            "version": "2026-03-10"
+          }
+        ]
+      },
+      "code-of-conduct-simple": {
+        "title": "Code Of Conduct Simple",
+        "description": "Code of Conduct Simple",
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "examples": [
+              "https://api.github.com/repos/github/docs/community/code_of_conduct"
+            ]
+          },
+          "key": {
+            "type": "string",
+            "examples": [
+              "citizen_code_of_conduct"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "examples": [
+              "Citizen Code of Conduct"
+            ]
+          },
+          "html_url": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uri",
+            "examples": [
+              "https://github.com/github/docs/blob/main/CODE_OF_CONDUCT.md"
+            ]
+          }
+        },
+        "required": [
+          "url",
+          "key",
+          "name",
+          "html_url"
+        ]
+      },
+      "full-repository": {
+        "title": "Full Repository",
+        "description": "Full Repository",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "examples": [
+              1296269
+            ]
+          },
+          "node_id": {
+            "type": "string",
+            "examples": [
+              "MDEwOlJlcG9zaXRvcnkxMjk2MjY5"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "examples": [
+              "Hello-World"
+            ]
+          },
+          "full_name": {
+            "type": "string",
+            "examples": [
+              "octocat/Hello-World"
+            ]
+          },
+          "owner": {
+            "$ref": "#/components/schemas/simple-user"
+          },
+          "private": {
+            "type": "boolean"
+          },
+          "html_url": {
+            "type": "string",
+            "format": "uri",
+            "examples": [
+              "https://github.com/octocat/Hello-World"
+            ]
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "examples": [
+              "This your first repo!"
+            ]
+          },
+          "fork": {
+            "type": "boolean"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "examples": [
+              "https://api.github.com/repos/octocat/Hello-World"
+            ]
+          },
+          "archive_url": {
+            "type": "string",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/{archive_format}{/ref}"
+            ]
+          },
+          "assignees_url": {
+            "type": "string",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/assignees{/user}"
+            ]
+          },
+          "blobs_url": {
+            "type": "string",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/git/blobs{/sha}"
+            ]
+          },
+          "branches_url": {
+            "type": "string",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/branches{/branch}"
+            ]
+          },
+          "collaborators_url": {
+            "type": "string",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/collaborators{/collaborator}"
+            ]
+          },
+          "comments_url": {
+            "type": "string",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/comments{/number}"
+            ]
+          },
+          "commits_url": {
+            "type": "string",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/commits{/sha}"
+            ]
+          },
+          "compare_url": {
+            "type": "string",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/compare/{base}...{head}"
+            ]
+          },
+          "contents_url": {
+            "type": "string",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/contents/{+path}"
+            ]
+          },
+          "contributors_url": {
+            "type": "string",
+            "format": "uri",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/contributors"
+            ]
+          },
+          "deployments_url": {
+            "type": "string",
+            "format": "uri",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/deployments"
+            ]
+          },
+          "downloads_url": {
+            "type": "string",
+            "format": "uri",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/downloads"
+            ]
+          },
+          "events_url": {
+            "type": "string",
+            "format": "uri",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/events"
+            ]
+          },
+          "forks_url": {
+            "type": "string",
+            "format": "uri",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/forks"
+            ]
+          },
+          "git_commits_url": {
+            "type": "string",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/git/commits{/sha}"
+            ]
+          },
+          "git_refs_url": {
+            "type": "string",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/git/refs{/sha}"
+            ]
+          },
+          "git_tags_url": {
+            "type": "string",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/git/tags{/sha}"
+            ]
+          },
+          "git_url": {
+            "type": "string",
+            "examples": [
+              "git:github.com/octocat/Hello-World.git"
+            ]
+          },
+          "issue_comment_url": {
+            "type": "string",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/issues/comments{/number}"
+            ]
+          },
+          "issue_events_url": {
+            "type": "string",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/issues/events{/number}"
+            ]
+          },
+          "issues_url": {
+            "type": "string",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/issues{/number}"
+            ]
+          },
+          "keys_url": {
+            "type": "string",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/keys{/key_id}"
+            ]
+          },
+          "labels_url": {
+            "type": "string",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/labels{/name}"
+            ]
+          },
+          "languages_url": {
+            "type": "string",
+            "format": "uri",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/languages"
+            ]
+          },
+          "merges_url": {
+            "type": "string",
+            "format": "uri",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/merges"
+            ]
+          },
+          "milestones_url": {
+            "type": "string",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/milestones{/number}"
+            ]
+          },
+          "notifications_url": {
+            "type": "string",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/notifications{?since,all,participating}"
+            ]
+          },
+          "pulls_url": {
+            "type": "string",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/pulls{/number}"
+            ]
+          },
+          "releases_url": {
+            "type": "string",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/releases{/id}"
+            ]
+          },
+          "ssh_url": {
+            "type": "string",
+            "examples": [
+              "git@github.com:octocat/Hello-World.git"
+            ]
+          },
+          "stargazers_url": {
+            "type": "string",
+            "format": "uri",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/stargazers"
+            ]
+          },
+          "statuses_url": {
+            "type": "string",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/statuses/{sha}"
+            ]
+          },
+          "subscribers_url": {
+            "type": "string",
+            "format": "uri",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/subscribers"
+            ]
+          },
+          "subscription_url": {
+            "type": "string",
+            "format": "uri",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/subscription"
+            ]
+          },
+          "tags_url": {
+            "type": "string",
+            "format": "uri",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/tags"
+            ]
+          },
+          "teams_url": {
+            "type": "string",
+            "format": "uri",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/teams"
+            ]
+          },
+          "trees_url": {
+            "type": "string",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/git/trees{/sha}"
+            ]
+          },
+          "clone_url": {
+            "type": "string",
+            "examples": [
+              "https://github.com/octocat/Hello-World.git"
+            ]
+          },
+          "mirror_url": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uri",
+            "examples": [
+              "git:git.example.com/octocat/Hello-World"
+            ]
+          },
+          "hooks_url": {
+            "type": "string",
+            "format": "uri",
+            "examples": [
+              "http://api.github.com/repos/octocat/Hello-World/hooks"
+            ]
+          },
+          "svn_url": {
+            "type": "string",
+            "format": "uri",
+            "examples": [
+              "https://svn.github.com/octocat/Hello-World"
+            ]
+          },
+          "homepage": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uri",
+            "examples": [
+              "https://github.com"
+            ]
+          },
+          "language": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "forks_count": {
+            "type": "integer",
+            "examples": [
+              9
+            ]
+          },
+          "stargazers_count": {
+            "type": "integer",
+            "examples": [
+              80
+            ]
+          },
+          "watchers_count": {
+            "type": "integer",
+            "examples": [
+              80
+            ]
+          },
+          "size": {
+            "description": "The size of the repository, in kilobytes. Size is calculated hourly. When a repository is initially created, the size is 0.",
+            "type": "integer",
+            "examples": [
+              108
+            ]
+          },
+          "default_branch": {
+            "type": "string",
+            "examples": [
+              "master"
+            ]
+          },
+          "open_issues_count": {
+            "type": "integer",
+            "examples": [
+              0
+            ]
+          },
+          "is_template": {
+            "type": "boolean",
+            "examples": [
+              true
+            ]
+          },
+          "topics": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "examples": [
+              "octocat",
+              "atom",
+              "electron",
+              "API"
+            ]
+          },
+          "has_issues": {
+            "type": "boolean",
+            "examples": [
+              true
+            ]
+          },
+          "has_projects": {
+            "type": "boolean",
+            "examples": [
+              true
+            ]
+          },
+          "has_wiki": {
+            "type": "boolean",
+            "examples": [
+              true
+            ]
+          },
+          "has_pages": {
+            "type": "boolean"
+          },
+          "has_downloads": {
+            "type": "boolean",
+            "examples": [
+              true
+            ]
+          },
+          "has_discussions": {
+            "type": "boolean",
+            "examples": [
+              true
+            ]
+          },
+          "has_pull_requests": {
+            "type": "boolean",
+            "examples": [
+              true
+            ]
+          },
+          "pull_request_creation_policy": {
+            "description": "The policy controlling who can create pull requests: all or collaborators_only.",
+            "type": "string",
+            "enum": [
+              "all",
+              "collaborators_only"
+            ],
+            "examples": [
+              "all"
+            ]
+          },
+          "archived": {
+            "type": "boolean"
+          },
+          "disabled": {
+            "type": "boolean",
+            "description": "Returns whether or not this repository disabled."
+          },
+          "visibility": {
+            "description": "The repository visibility: public, private, or internal.",
+            "type": "string",
+            "examples": [
+              "public"
+            ]
+          },
+          "pushed_at": {
+            "type": "string",
+            "format": "date-time",
+            "examples": [
+              "2011-01-26T19:06:43Z"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "examples": [
+              "2011-01-26T19:01:12Z"
+            ]
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "examples": [
+              "2011-01-26T19:14:43Z"
+            ]
+          },
+          "permissions": {
+            "type": "object",
+            "properties": {
+              "admin": {
+                "type": "boolean"
+              },
+              "maintain": {
+                "type": "boolean"
+              },
+              "push": {
+                "type": "boolean"
+              },
+              "triage": {
+                "type": "boolean"
+              },
+              "pull": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "admin",
+              "pull",
+              "push"
+            ]
+          },
+          "allow_rebase_merge": {
+            "type": "boolean",
+            "examples": [
+              true
+            ]
+          },
+          "template_repository": {
+            "anyOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/repository"
+              }
+            ]
+          },
+          "temp_clone_token": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "allow_squash_merge": {
+            "type": "boolean",
+            "examples": [
+              true
+            ]
+          },
+          "allow_auto_merge": {
+            "type": "boolean",
+            "examples": [
+              false
+            ]
+          },
+          "delete_branch_on_merge": {
+            "type": "boolean",
+            "examples": [
+              false
+            ]
+          },
+          "allow_merge_commit": {
+            "type": "boolean",
+            "examples": [
+              true
+            ]
+          },
+          "allow_update_branch": {
+            "type": "boolean",
+            "examples": [
+              true
+            ]
+          },
+          "use_squash_pr_title_as_default": {
+            "type": "boolean",
+            "examples": [
+              false
+            ]
+          },
+          "squash_merge_commit_title": {
+            "type": "string",
+            "enum": [
+              "PR_TITLE",
+              "COMMIT_OR_PR_TITLE"
+            ],
+            "description": "The default value for a squash merge commit title:\n\n- `PR_TITLE` - default to the pull request's title.\n- `COMMIT_OR_PR_TITLE` - default to the commit's title (if only one commit) or the pull request's title (when more than one commit).",
+            "examples": [
+              "PR_TITLE"
+            ]
+          },
+          "squash_merge_commit_message": {
+            "type": "string",
+            "enum": [
+              "PR_BODY",
+              "COMMIT_MESSAGES",
+              "BLANK"
+            ],
+            "description": "The default value for a squash merge commit message:\n\n- `PR_BODY` - default to the pull request's body.\n- `COMMIT_MESSAGES` - default to the branch's commit messages.\n- `BLANK` - default to a blank commit message.",
+            "examples": [
+              "PR_BODY"
+            ]
+          },
+          "merge_commit_title": {
+            "type": "string",
+            "enum": [
+              "PR_TITLE",
+              "MERGE_MESSAGE"
+            ],
+            "description": "The default value for a merge commit title.\n\n  - `PR_TITLE` - default to the pull request's title.\n  - `MERGE_MESSAGE` - default to the classic title for a merge message (e.g., Merge pull request #123 from branch-name).",
+            "examples": [
+              "PR_TITLE"
+            ]
+          },
+          "merge_commit_message": {
+            "type": "string",
+            "enum": [
+              "PR_BODY",
+              "PR_TITLE",
+              "BLANK"
+            ],
+            "description": "The default value for a merge commit message.\n\n- `PR_TITLE` - default to the pull request's title.\n- `PR_BODY` - default to the pull request's body.\n- `BLANK` - default to a blank commit message.",
+            "examples": [
+              "PR_BODY"
+            ]
+          },
+          "allow_forking": {
+            "type": "boolean",
+            "examples": [
+              true
+            ]
+          },
+          "web_commit_signoff_required": {
+            "type": "boolean",
+            "examples": [
+              false
+            ]
+          },
+          "subscribers_count": {
+            "type": "integer",
+            "examples": [
+              42
+            ]
+          },
+          "network_count": {
+            "type": "integer",
+            "examples": [
+              0
+            ]
+          },
+          "license": {
+            "anyOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/license-simple"
+              }
+            ]
+          },
+          "organization": {
+            "anyOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/simple-user"
+              }
+            ]
+          },
+          "parent": {
+            "$ref": "#/components/schemas/repository"
+          },
+          "source": {
+            "$ref": "#/components/schemas/repository"
+          },
+          "forks": {
+            "type": "integer"
+          },
+          "master_branch": {
+            "type": "string"
+          },
+          "open_issues": {
+            "type": "integer"
+          },
+          "watchers": {
+            "type": "integer"
+          },
+          "anonymous_access_enabled": {
+            "description": "Whether anonymous git access is allowed.",
+            "default": true,
+            "type": "boolean"
+          },
+          "code_of_conduct": {
+            "$ref": "#/components/schemas/code-of-conduct-simple"
+          },
+          "security_and_analysis": {
+            "$ref": "#/components/schemas/security-and-analysis"
+          },
+          "custom_properties": {
+            "type": "object",
+            "description": "The custom properties that were defined for the repository. The keys are the custom property names, and the values are the corresponding custom property values.",
+            "additionalProperties": true
+          }
+        },
+        "required": [
+          "archive_url",
+          "assignees_url",
+          "blobs_url",
+          "branches_url",
+          "collaborators_url",
+          "comments_url",
+          "commits_url",
+          "compare_url",
+          "contents_url",
+          "contributors_url",
+          "deployments_url",
+          "description",
+          "downloads_url",
+          "events_url",
+          "fork",
+          "forks_url",
+          "full_name",
+          "git_commits_url",
+          "git_refs_url",
+          "git_tags_url",
+          "hooks_url",
+          "html_url",
+          "id",
+          "node_id",
+          "issue_comment_url",
+          "issue_events_url",
+          "issues_url",
+          "keys_url",
+          "labels_url",
+          "languages_url",
+          "merges_url",
+          "milestones_url",
+          "name",
+          "notifications_url",
+          "owner",
+          "private",
+          "pulls_url",
+          "releases_url",
+          "stargazers_url",
+          "statuses_url",
+          "subscribers_url",
+          "subscription_url",
+          "tags_url",
+          "teams_url",
+          "trees_url",
+          "url",
+          "clone_url",
+          "default_branch",
+          "forks",
+          "forks_count",
+          "git_url",
+          "has_issues",
+          "has_projects",
+          "has_wiki",
+          "has_pages",
+          "has_discussions",
+          "homepage",
+          "language",
+          "archived",
+          "disabled",
+          "mirror_url",
+          "open_issues",
+          "open_issues_count",
+          "license",
+          "pushed_at",
+          "size",
+          "ssh_url",
+          "stargazers_count",
+          "svn_url",
+          "watchers",
+          "watchers_count",
+          "created_at",
+          "updated_at",
+          "network_count",
+          "subscribers_count"
+        ],
+        "x-github-breaking-changes": [
+          {
+            "changeset": "remove_use_squash_pr_title_as_default",
+            "patch": {
+              "properties": {
+                "use_squash_pr_title_as_default": null
+              }
+            },
+            "version": "2026-03-10"
+          },
+          {
+            "changeset": "remove_has_downloads",
+            "patch": {
+              "properties": {
+                "has_downloads": null
+              }
+            },
+            "version": "2026-03-10"
+          }
         ]
       }
     },
@@ -649,6 +2843,553 @@
           "secret_scanning_push_protection_custom_link": "https://github.com/octo-org/octo-repo/blob/main/im-blocked.md",
           "secret_scanning_push_protection_custom_link_enabled": false,
           "secret_scanning_validity_checks_enabled": false
+        },
+        "x-github-breaking-changes": [
+          {
+            "changeset": "remove_secret_scanning_custom_link_enablement_field",
+            "patch": [
+              {
+                "op": "remove",
+                "path": "/value/secret_scanning_push_protection_custom_link_enabled"
+              }
+            ],
+            "version": "2026-03-10"
+          }
+        ]
+      },
+      "full-repository-default-response": {
+        "summary": "Default response",
+        "value": {
+          "id": 1296269,
+          "node_id": "MDEwOlJlcG9zaXRvcnkxMjk2MjY5",
+          "name": "Hello-World",
+          "full_name": "octocat/Hello-World",
+          "owner": {
+            "login": "octocat",
+            "id": 1,
+            "node_id": "MDQ6VXNlcjE=",
+            "avatar_url": "https://github.com/images/error/octocat_happy.gif",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/octocat",
+            "html_url": "https://github.com/octocat",
+            "followers_url": "https://api.github.com/users/octocat/followers",
+            "following_url": "https://api.github.com/users/octocat/following{/other_user}",
+            "gists_url": "https://api.github.com/users/octocat/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/octocat/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/octocat/subscriptions",
+            "organizations_url": "https://api.github.com/users/octocat/orgs",
+            "repos_url": "https://api.github.com/users/octocat/repos",
+            "events_url": "https://api.github.com/users/octocat/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/octocat/received_events",
+            "type": "User",
+            "site_admin": false
+          },
+          "private": false,
+          "html_url": "https://github.com/octocat/Hello-World",
+          "description": "This your first repo!",
+          "fork": false,
+          "url": "https://api.github.com/repos/octocat/Hello-World",
+          "archive_url": "https://api.github.com/repos/octocat/Hello-World/{archive_format}{/ref}",
+          "assignees_url": "https://api.github.com/repos/octocat/Hello-World/assignees{/user}",
+          "blobs_url": "https://api.github.com/repos/octocat/Hello-World/git/blobs{/sha}",
+          "branches_url": "https://api.github.com/repos/octocat/Hello-World/branches{/branch}",
+          "collaborators_url": "https://api.github.com/repos/octocat/Hello-World/collaborators{/collaborator}",
+          "comments_url": "https://api.github.com/repos/octocat/Hello-World/comments{/number}",
+          "commits_url": "https://api.github.com/repos/octocat/Hello-World/commits{/sha}",
+          "compare_url": "https://api.github.com/repos/octocat/Hello-World/compare/{base}...{head}",
+          "contents_url": "https://api.github.com/repos/octocat/Hello-World/contents/{+path}",
+          "contributors_url": "https://api.github.com/repos/octocat/Hello-World/contributors",
+          "deployments_url": "https://api.github.com/repos/octocat/Hello-World/deployments",
+          "downloads_url": "https://api.github.com/repos/octocat/Hello-World/downloads",
+          "events_url": "https://api.github.com/repos/octocat/Hello-World/events",
+          "forks_url": "https://api.github.com/repos/octocat/Hello-World/forks",
+          "git_commits_url": "https://api.github.com/repos/octocat/Hello-World/git/commits{/sha}",
+          "git_refs_url": "https://api.github.com/repos/octocat/Hello-World/git/refs{/sha}",
+          "git_tags_url": "https://api.github.com/repos/octocat/Hello-World/git/tags{/sha}",
+          "git_url": "git:github.com/octocat/Hello-World.git",
+          "issue_comment_url": "https://api.github.com/repos/octocat/Hello-World/issues/comments{/number}",
+          "issue_events_url": "https://api.github.com/repos/octocat/Hello-World/issues/events{/number}",
+          "issues_url": "https://api.github.com/repos/octocat/Hello-World/issues{/number}",
+          "keys_url": "https://api.github.com/repos/octocat/Hello-World/keys{/key_id}",
+          "labels_url": "https://api.github.com/repos/octocat/Hello-World/labels{/name}",
+          "languages_url": "https://api.github.com/repos/octocat/Hello-World/languages",
+          "merges_url": "https://api.github.com/repos/octocat/Hello-World/merges",
+          "milestones_url": "https://api.github.com/repos/octocat/Hello-World/milestones{/number}",
+          "notifications_url": "https://api.github.com/repos/octocat/Hello-World/notifications{?since,all,participating}",
+          "pulls_url": "https://api.github.com/repos/octocat/Hello-World/pulls{/number}",
+          "releases_url": "https://api.github.com/repos/octocat/Hello-World/releases{/id}",
+          "ssh_url": "git@github.com:octocat/Hello-World.git",
+          "stargazers_url": "https://api.github.com/repos/octocat/Hello-World/stargazers",
+          "statuses_url": "https://api.github.com/repos/octocat/Hello-World/statuses/{sha}",
+          "subscribers_url": "https://api.github.com/repos/octocat/Hello-World/subscribers",
+          "subscription_url": "https://api.github.com/repos/octocat/Hello-World/subscription",
+          "tags_url": "https://api.github.com/repos/octocat/Hello-World/tags",
+          "teams_url": "https://api.github.com/repos/octocat/Hello-World/teams",
+          "trees_url": "https://api.github.com/repos/octocat/Hello-World/git/trees{/sha}",
+          "clone_url": "https://github.com/octocat/Hello-World.git",
+          "mirror_url": "git:git.example.com/octocat/Hello-World",
+          "hooks_url": "https://api.github.com/repos/octocat/Hello-World/hooks",
+          "svn_url": "https://svn.github.com/octocat/Hello-World",
+          "homepage": "https://github.com",
+          "language": null,
+          "forks_count": 9,
+          "forks": 9,
+          "stargazers_count": 80,
+          "watchers_count": 80,
+          "watchers": 80,
+          "size": 108,
+          "default_branch": "master",
+          "open_issues_count": 0,
+          "open_issues": 0,
+          "is_template": false,
+          "topics": [
+            "octocat",
+            "atom",
+            "electron",
+            "api"
+          ],
+          "has_issues": true,
+          "has_projects": true,
+          "has_wiki": true,
+          "has_pages": false,
+          "has_downloads": true,
+          "has_discussions": false,
+          "archived": false,
+          "disabled": false,
+          "visibility": "public",
+          "pushed_at": "2011-01-26T19:06:43Z",
+          "created_at": "2011-01-26T19:01:12Z",
+          "updated_at": "2011-01-26T19:14:43Z",
+          "permissions": {
+            "pull": true,
+            "push": false,
+            "admin": false
+          },
+          "allow_rebase_merge": true,
+          "template_repository": {
+            "id": 1296269,
+            "node_id": "MDEwOlJlcG9zaXRvcnkxMjk2MjY5",
+            "name": "Hello-World-Template",
+            "full_name": "octocat/Hello-World-Template",
+            "owner": {
+              "login": "octocat",
+              "id": 1,
+              "node_id": "MDQ6VXNlcjE=",
+              "avatar_url": "https://github.com/images/error/octocat_happy.gif",
+              "gravatar_id": "",
+              "url": "https://api.github.com/users/octocat",
+              "html_url": "https://github.com/octocat",
+              "followers_url": "https://api.github.com/users/octocat/followers",
+              "following_url": "https://api.github.com/users/octocat/following{/other_user}",
+              "gists_url": "https://api.github.com/users/octocat/gists{/gist_id}",
+              "starred_url": "https://api.github.com/users/octocat/starred{/owner}{/repo}",
+              "subscriptions_url": "https://api.github.com/users/octocat/subscriptions",
+              "organizations_url": "https://api.github.com/users/octocat/orgs",
+              "repos_url": "https://api.github.com/users/octocat/repos",
+              "events_url": "https://api.github.com/users/octocat/events{/privacy}",
+              "received_events_url": "https://api.github.com/users/octocat/received_events",
+              "type": "User",
+              "site_admin": false
+            },
+            "private": false,
+            "html_url": "https://github.com/octocat/Hello-World-Template",
+            "description": "This your first repo!",
+            "fork": false,
+            "url": "https://api.github.com/repos/octocat/Hello-World-Template",
+            "archive_url": "https://api.github.com/repos/octocat/Hello-World-Template/{archive_format}{/ref}",
+            "assignees_url": "https://api.github.com/repos/octocat/Hello-World-Template/assignees{/user}",
+            "blobs_url": "https://api.github.com/repos/octocat/Hello-World-Template/git/blobs{/sha}",
+            "branches_url": "https://api.github.com/repos/octocat/Hello-World-Template/branches{/branch}",
+            "collaborators_url": "https://api.github.com/repos/octocat/Hello-World-Template/collaborators{/collaborator}",
+            "comments_url": "https://api.github.com/repos/octocat/Hello-World-Template/comments{/number}",
+            "commits_url": "https://api.github.com/repos/octocat/Hello-World-Template/commits{/sha}",
+            "compare_url": "https://api.github.com/repos/octocat/Hello-World-Template/compare/{base}...{head}",
+            "contents_url": "https://api.github.com/repos/octocat/Hello-World-Template/contents/{+path}",
+            "contributors_url": "https://api.github.com/repos/octocat/Hello-World-Template/contributors",
+            "deployments_url": "https://api.github.com/repos/octocat/Hello-World-Template/deployments",
+            "downloads_url": "https://api.github.com/repos/octocat/Hello-World-Template/downloads",
+            "events_url": "https://api.github.com/repos/octocat/Hello-World-Template/events",
+            "forks_url": "https://api.github.com/repos/octocat/Hello-World-Template/forks",
+            "git_commits_url": "https://api.github.com/repos/octocat/Hello-World-Template/git/commits{/sha}",
+            "git_refs_url": "https://api.github.com/repos/octocat/Hello-World-Template/git/refs{/sha}",
+            "git_tags_url": "https://api.github.com/repos/octocat/Hello-World-Template/git/tags{/sha}",
+            "git_url": "git:github.com/octocat/Hello-World-Template.git",
+            "issue_comment_url": "https://api.github.com/repos/octocat/Hello-World-Template/issues/comments{/number}",
+            "issue_events_url": "https://api.github.com/repos/octocat/Hello-World-Template/issues/events{/number}",
+            "issues_url": "https://api.github.com/repos/octocat/Hello-World-Template/issues{/number}",
+            "keys_url": "https://api.github.com/repos/octocat/Hello-World-Template/keys{/key_id}",
+            "labels_url": "https://api.github.com/repos/octocat/Hello-World-Template/labels{/name}",
+            "languages_url": "https://api.github.com/repos/octocat/Hello-World-Template/languages",
+            "merges_url": "https://api.github.com/repos/octocat/Hello-World-Template/merges",
+            "milestones_url": "https://api.github.com/repos/octocat/Hello-World-Template/milestones{/number}",
+            "notifications_url": "https://api.github.com/repos/octocat/Hello-World-Template/notifications{?since,all,participating}",
+            "pulls_url": "https://api.github.com/repos/octocat/Hello-World-Template/pulls{/number}",
+            "releases_url": "https://api.github.com/repos/octocat/Hello-World-Template/releases{/id}",
+            "ssh_url": "git@github.com:octocat/Hello-World-Template.git",
+            "stargazers_url": "https://api.github.com/repos/octocat/Hello-World-Template/stargazers",
+            "statuses_url": "https://api.github.com/repos/octocat/Hello-World-Template/statuses/{sha}",
+            "subscribers_url": "https://api.github.com/repos/octocat/Hello-World-Template/subscribers",
+            "subscription_url": "https://api.github.com/repos/octocat/Hello-World-Template/subscription",
+            "tags_url": "https://api.github.com/repos/octocat/Hello-World-Template/tags",
+            "teams_url": "https://api.github.com/repos/octocat/Hello-World-Template/teams",
+            "trees_url": "https://api.github.com/repos/octocat/Hello-World-Template/git/trees{/sha}",
+            "clone_url": "https://github.com/octocat/Hello-World-Template.git",
+            "mirror_url": "git:git.example.com/octocat/Hello-World-Template",
+            "hooks_url": "https://api.github.com/repos/octocat/Hello-World-Template/hooks",
+            "svn_url": "https://svn.github.com/octocat/Hello-World-Template",
+            "homepage": "https://github.com",
+            "language": null,
+            "forks": 9,
+            "forks_count": 9,
+            "stargazers_count": 80,
+            "watchers_count": 80,
+            "watchers": 80,
+            "size": 108,
+            "default_branch": "master",
+            "open_issues": 0,
+            "open_issues_count": 0,
+            "is_template": true,
+            "license": {
+              "key": "mit",
+              "name": "MIT License",
+              "url": "https://api.github.com/licenses/mit",
+              "spdx_id": "MIT",
+              "node_id": "MDc6TGljZW5zZW1pdA==",
+              "html_url": "https://api.github.com/licenses/mit"
+            },
+            "topics": [
+              "octocat",
+              "atom",
+              "electron",
+              "api"
+            ],
+            "has_issues": true,
+            "has_projects": true,
+            "has_wiki": true,
+            "has_pages": false,
+            "has_downloads": true,
+            "archived": false,
+            "disabled": false,
+            "visibility": "public",
+            "pushed_at": "2011-01-26T19:06:43Z",
+            "created_at": "2011-01-26T19:01:12Z",
+            "updated_at": "2011-01-26T19:14:43Z",
+            "permissions": {
+              "admin": false,
+              "push": false,
+              "pull": true
+            },
+            "allow_rebase_merge": true,
+            "temp_clone_token": "ABTLWHOULUVAXGTRYU7OC2876QJ2O",
+            "allow_squash_merge": true,
+            "allow_auto_merge": false,
+            "delete_branch_on_merge": true,
+            "allow_merge_commit": true,
+            "subscribers_count": 42,
+            "network_count": 0
+          },
+          "temp_clone_token": "ABTLWHOULUVAXGTRYU7OC2876QJ2O",
+          "allow_squash_merge": true,
+          "allow_auto_merge": false,
+          "delete_branch_on_merge": true,
+          "allow_merge_commit": true,
+          "allow_forking": true,
+          "subscribers_count": 42,
+          "network_count": 0,
+          "license": {
+            "key": "mit",
+            "name": "MIT License",
+            "spdx_id": "MIT",
+            "url": "https://api.github.com/licenses/mit",
+            "node_id": "MDc6TGljZW5zZW1pdA=="
+          },
+          "organization": {
+            "login": "octocat",
+            "id": 1,
+            "node_id": "MDQ6VXNlcjE=",
+            "avatar_url": "https://github.com/images/error/octocat_happy.gif",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/octocat",
+            "html_url": "https://github.com/octocat",
+            "followers_url": "https://api.github.com/users/octocat/followers",
+            "following_url": "https://api.github.com/users/octocat/following{/other_user}",
+            "gists_url": "https://api.github.com/users/octocat/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/octocat/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/octocat/subscriptions",
+            "organizations_url": "https://api.github.com/users/octocat/orgs",
+            "repos_url": "https://api.github.com/users/octocat/repos",
+            "events_url": "https://api.github.com/users/octocat/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/octocat/received_events",
+            "type": "Organization",
+            "site_admin": false
+          },
+          "parent": {
+            "id": 1296269,
+            "node_id": "MDEwOlJlcG9zaXRvcnkxMjk2MjY5",
+            "name": "Hello-World",
+            "full_name": "octocat/Hello-World",
+            "owner": {
+              "login": "octocat",
+              "id": 1,
+              "node_id": "MDQ6VXNlcjE=",
+              "avatar_url": "https://github.com/images/error/octocat_happy.gif",
+              "gravatar_id": "",
+              "url": "https://api.github.com/users/octocat",
+              "html_url": "https://github.com/octocat",
+              "followers_url": "https://api.github.com/users/octocat/followers",
+              "following_url": "https://api.github.com/users/octocat/following{/other_user}",
+              "gists_url": "https://api.github.com/users/octocat/gists{/gist_id}",
+              "starred_url": "https://api.github.com/users/octocat/starred{/owner}{/repo}",
+              "subscriptions_url": "https://api.github.com/users/octocat/subscriptions",
+              "organizations_url": "https://api.github.com/users/octocat/orgs",
+              "repos_url": "https://api.github.com/users/octocat/repos",
+              "events_url": "https://api.github.com/users/octocat/events{/privacy}",
+              "received_events_url": "https://api.github.com/users/octocat/received_events",
+              "type": "User",
+              "site_admin": false
+            },
+            "private": false,
+            "html_url": "https://github.com/octocat/Hello-World",
+            "description": "This your first repo!",
+            "fork": false,
+            "url": "https://api.github.com/repos/octocat/Hello-World",
+            "archive_url": "https://api.github.com/repos/octocat/Hello-World/{archive_format}{/ref}",
+            "assignees_url": "https://api.github.com/repos/octocat/Hello-World/assignees{/user}",
+            "blobs_url": "https://api.github.com/repos/octocat/Hello-World/git/blobs{/sha}",
+            "branches_url": "https://api.github.com/repos/octocat/Hello-World/branches{/branch}",
+            "collaborators_url": "https://api.github.com/repos/octocat/Hello-World/collaborators{/collaborator}",
+            "comments_url": "https://api.github.com/repos/octocat/Hello-World/comments{/number}",
+            "commits_url": "https://api.github.com/repos/octocat/Hello-World/commits{/sha}",
+            "compare_url": "https://api.github.com/repos/octocat/Hello-World/compare/{base}...{head}",
+            "contents_url": "https://api.github.com/repos/octocat/Hello-World/contents/{+path}",
+            "contributors_url": "https://api.github.com/repos/octocat/Hello-World/contributors",
+            "deployments_url": "https://api.github.com/repos/octocat/Hello-World/deployments",
+            "downloads_url": "https://api.github.com/repos/octocat/Hello-World/downloads",
+            "events_url": "https://api.github.com/repos/octocat/Hello-World/events",
+            "forks_url": "https://api.github.com/repos/octocat/Hello-World/forks",
+            "git_commits_url": "https://api.github.com/repos/octocat/Hello-World/git/commits{/sha}",
+            "git_refs_url": "https://api.github.com/repos/octocat/Hello-World/git/refs{/sha}",
+            "git_tags_url": "https://api.github.com/repos/octocat/Hello-World/git/tags{/sha}",
+            "git_url": "git:github.com/octocat/Hello-World.git",
+            "issue_comment_url": "https://api.github.com/repos/octocat/Hello-World/issues/comments{/number}",
+            "issue_events_url": "https://api.github.com/repos/octocat/Hello-World/issues/events{/number}",
+            "issues_url": "https://api.github.com/repos/octocat/Hello-World/issues{/number}",
+            "keys_url": "https://api.github.com/repos/octocat/Hello-World/keys{/key_id}",
+            "labels_url": "https://api.github.com/repos/octocat/Hello-World/labels{/name}",
+            "languages_url": "https://api.github.com/repos/octocat/Hello-World/languages",
+            "merges_url": "https://api.github.com/repos/octocat/Hello-World/merges",
+            "milestones_url": "https://api.github.com/repos/octocat/Hello-World/milestones{/number}",
+            "notifications_url": "https://api.github.com/repos/octocat/Hello-World/notifications{?since,all,participating}",
+            "pulls_url": "https://api.github.com/repos/octocat/Hello-World/pulls{/number}",
+            "releases_url": "https://api.github.com/repos/octocat/Hello-World/releases{/id}",
+            "ssh_url": "git@github.com:octocat/Hello-World.git",
+            "stargazers_url": "https://api.github.com/repos/octocat/Hello-World/stargazers",
+            "statuses_url": "https://api.github.com/repos/octocat/Hello-World/statuses/{sha}",
+            "subscribers_url": "https://api.github.com/repos/octocat/Hello-World/subscribers",
+            "subscription_url": "https://api.github.com/repos/octocat/Hello-World/subscription",
+            "tags_url": "https://api.github.com/repos/octocat/Hello-World/tags",
+            "teams_url": "https://api.github.com/repos/octocat/Hello-World/teams",
+            "trees_url": "https://api.github.com/repos/octocat/Hello-World/git/trees{/sha}",
+            "clone_url": "https://github.com/octocat/Hello-World.git",
+            "mirror_url": "git:git.example.com/octocat/Hello-World",
+            "hooks_url": "https://api.github.com/repos/octocat/Hello-World/hooks",
+            "svn_url": "https://svn.github.com/octocat/Hello-World",
+            "homepage": "https://github.com",
+            "language": null,
+            "forks_count": 9,
+            "stargazers_count": 80,
+            "watchers_count": 80,
+            "size": 108,
+            "default_branch": "master",
+            "open_issues_count": 0,
+            "is_template": true,
+            "topics": [
+              "octocat",
+              "atom",
+              "electron",
+              "api"
+            ],
+            "has_issues": true,
+            "has_projects": true,
+            "has_wiki": true,
+            "has_pages": false,
+            "has_downloads": true,
+            "archived": false,
+            "disabled": false,
+            "visibility": "public",
+            "pushed_at": "2011-01-26T19:06:43Z",
+            "created_at": "2011-01-26T19:01:12Z",
+            "updated_at": "2011-01-26T19:14:43Z",
+            "permissions": {
+              "admin": false,
+              "push": false,
+              "pull": true
+            },
+            "allow_rebase_merge": true,
+            "temp_clone_token": "ABTLWHOULUVAXGTRYU7OC2876QJ2O",
+            "allow_squash_merge": true,
+            "allow_auto_merge": false,
+            "delete_branch_on_merge": true,
+            "allow_merge_commit": true,
+            "subscribers_count": 42,
+            "network_count": 0,
+            "license": {
+              "key": "mit",
+              "name": "MIT License",
+              "url": "https://api.github.com/licenses/mit",
+              "spdx_id": "MIT",
+              "node_id": "MDc6TGljZW5zZW1pdA==",
+              "html_url": "https://api.github.com/licenses/mit"
+            },
+            "forks": 1,
+            "open_issues": 1,
+            "watchers": 1
+          },
+          "source": {
+            "id": 1296269,
+            "node_id": "MDEwOlJlcG9zaXRvcnkxMjk2MjY5",
+            "name": "Hello-World",
+            "full_name": "octocat/Hello-World",
+            "owner": {
+              "login": "octocat",
+              "id": 1,
+              "node_id": "MDQ6VXNlcjE=",
+              "avatar_url": "https://github.com/images/error/octocat_happy.gif",
+              "gravatar_id": "",
+              "url": "https://api.github.com/users/octocat",
+              "html_url": "https://github.com/octocat",
+              "followers_url": "https://api.github.com/users/octocat/followers",
+              "following_url": "https://api.github.com/users/octocat/following{/other_user}",
+              "gists_url": "https://api.github.com/users/octocat/gists{/gist_id}",
+              "starred_url": "https://api.github.com/users/octocat/starred{/owner}{/repo}",
+              "subscriptions_url": "https://api.github.com/users/octocat/subscriptions",
+              "organizations_url": "https://api.github.com/users/octocat/orgs",
+              "repos_url": "https://api.github.com/users/octocat/repos",
+              "events_url": "https://api.github.com/users/octocat/events{/privacy}",
+              "received_events_url": "https://api.github.com/users/octocat/received_events",
+              "type": "User",
+              "site_admin": false
+            },
+            "private": false,
+            "html_url": "https://github.com/octocat/Hello-World",
+            "description": "This your first repo!",
+            "fork": false,
+            "url": "https://api.github.com/repos/octocat/Hello-World",
+            "archive_url": "https://api.github.com/repos/octocat/Hello-World/{archive_format}{/ref}",
+            "assignees_url": "https://api.github.com/repos/octocat/Hello-World/assignees{/user}",
+            "blobs_url": "https://api.github.com/repos/octocat/Hello-World/git/blobs{/sha}",
+            "branches_url": "https://api.github.com/repos/octocat/Hello-World/branches{/branch}",
+            "collaborators_url": "https://api.github.com/repos/octocat/Hello-World/collaborators{/collaborator}",
+            "comments_url": "https://api.github.com/repos/octocat/Hello-World/comments{/number}",
+            "commits_url": "https://api.github.com/repos/octocat/Hello-World/commits{/sha}",
+            "compare_url": "https://api.github.com/repos/octocat/Hello-World/compare/{base}...{head}",
+            "contents_url": "https://api.github.com/repos/octocat/Hello-World/contents/{+path}",
+            "contributors_url": "https://api.github.com/repos/octocat/Hello-World/contributors",
+            "deployments_url": "https://api.github.com/repos/octocat/Hello-World/deployments",
+            "downloads_url": "https://api.github.com/repos/octocat/Hello-World/downloads",
+            "events_url": "https://api.github.com/repos/octocat/Hello-World/events",
+            "forks_url": "https://api.github.com/repos/octocat/Hello-World/forks",
+            "git_commits_url": "https://api.github.com/repos/octocat/Hello-World/git/commits{/sha}",
+            "git_refs_url": "https://api.github.com/repos/octocat/Hello-World/git/refs{/sha}",
+            "git_tags_url": "https://api.github.com/repos/octocat/Hello-World/git/tags{/sha}",
+            "git_url": "git:github.com/octocat/Hello-World.git",
+            "issue_comment_url": "https://api.github.com/repos/octocat/Hello-World/issues/comments{/number}",
+            "issue_events_url": "https://api.github.com/repos/octocat/Hello-World/issues/events{/number}",
+            "issues_url": "https://api.github.com/repos/octocat/Hello-World/issues{/number}",
+            "keys_url": "https://api.github.com/repos/octocat/Hello-World/keys{/key_id}",
+            "labels_url": "https://api.github.com/repos/octocat/Hello-World/labels{/name}",
+            "languages_url": "https://api.github.com/repos/octocat/Hello-World/languages",
+            "merges_url": "https://api.github.com/repos/octocat/Hello-World/merges",
+            "milestones_url": "https://api.github.com/repos/octocat/Hello-World/milestones{/number}",
+            "notifications_url": "https://api.github.com/repos/octocat/Hello-World/notifications{?since,all,participating}",
+            "pulls_url": "https://api.github.com/repos/octocat/Hello-World/pulls{/number}",
+            "releases_url": "https://api.github.com/repos/octocat/Hello-World/releases{/id}",
+            "ssh_url": "git@github.com:octocat/Hello-World.git",
+            "stargazers_url": "https://api.github.com/repos/octocat/Hello-World/stargazers",
+            "statuses_url": "https://api.github.com/repos/octocat/Hello-World/statuses/{sha}",
+            "subscribers_url": "https://api.github.com/repos/octocat/Hello-World/subscribers",
+            "subscription_url": "https://api.github.com/repos/octocat/Hello-World/subscription",
+            "tags_url": "https://api.github.com/repos/octocat/Hello-World/tags",
+            "teams_url": "https://api.github.com/repos/octocat/Hello-World/teams",
+            "trees_url": "https://api.github.com/repos/octocat/Hello-World/git/trees{/sha}",
+            "clone_url": "https://github.com/octocat/Hello-World.git",
+            "mirror_url": "git:git.example.com/octocat/Hello-World",
+            "hooks_url": "https://api.github.com/repos/octocat/Hello-World/hooks",
+            "svn_url": "https://svn.github.com/octocat/Hello-World",
+            "homepage": "https://github.com",
+            "language": null,
+            "forks_count": 9,
+            "stargazers_count": 80,
+            "watchers_count": 80,
+            "size": 108,
+            "default_branch": "master",
+            "open_issues_count": 0,
+            "is_template": true,
+            "topics": [
+              "octocat",
+              "atom",
+              "electron",
+              "api"
+            ],
+            "has_issues": true,
+            "has_projects": true,
+            "has_wiki": true,
+            "has_pages": false,
+            "has_downloads": true,
+            "archived": false,
+            "disabled": false,
+            "visibility": "public",
+            "pushed_at": "2011-01-26T19:06:43Z",
+            "created_at": "2011-01-26T19:01:12Z",
+            "updated_at": "2011-01-26T19:14:43Z",
+            "permissions": {
+              "admin": false,
+              "push": false,
+              "pull": true
+            },
+            "allow_rebase_merge": true,
+            "temp_clone_token": "ABTLWHOULUVAXGTRYU7OC2876QJ2O",
+            "allow_squash_merge": true,
+            "allow_auto_merge": false,
+            "delete_branch_on_merge": true,
+            "allow_merge_commit": true,
+            "subscribers_count": 42,
+            "network_count": 0,
+            "license": {
+              "key": "mit",
+              "name": "MIT License",
+              "url": "https://api.github.com/licenses/mit",
+              "spdx_id": "MIT",
+              "node_id": "MDc6TGljZW5zZW1pdA==",
+              "html_url": "https://api.github.com/licenses/mit"
+            },
+            "forks": 1,
+            "open_issues": 1,
+            "watchers": 1,
+            "security_and_analysis": {
+              "advanced_security": {
+                "status": "enabled"
+              },
+              "secret_scanning": {
+                "status": "enabled"
+              },
+              "secret_scanning_push_protection": {
+                "status": "disabled"
+              },
+              "secret_scanning_non_provider_patterns": {
+                "status": "disabled"
+              },
+              "secret_scanning_delegated_bypass": {
+                "status": "disabled"
+              },
+              "secret_scanning_validity_checks": {
+                "status": "disabled"
+              },
+              "secret_scanning_delegated_alert_dismissal": {
+                "status": "disabled"
+              }
+            }
+          }
         }
       }
     },
@@ -656,6 +3397,24 @@
       "org": {
         "name": "org",
         "description": "The organization name. The name is not case sensitive.",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "owner": {
+        "name": "owner",
+        "description": "The account owner of the repository. The name is not case sensitive.",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "repo": {
+        "name": "repo",
+        "description": "The name of the repository without the `.git` extension. The name is not case sensitive.",
         "in": "path",
         "required": true,
         "schema": {
@@ -673,55 +3432,28 @@
             }
           }
         }
+      },
+      "forbidden": {
+        "description": "Forbidden",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/basic-error"
+            }
+          }
+        }
+      },
+      "moved_permanently": {
+        "description": "Moved permanently",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/basic-error"
+            }
+          }
+        }
       }
     },
     "headers": {}
-  },
-  "paths": {
-    "/orgs/{org}": {
-      "get": {
-        "summary": "Get an organization",
-        "description": "Gets information about an organization.\n\nWhen the value of `two_factor_requirement_enabled` is `true`, the organization requires all members, billing managers, outside collaborators, guest collaborators, repository collaborators, or everyone with access to any repository within the organization to enable [two-factor authentication](https://docs.github.com/enterprise-cloud@latest//articles/securing-your-account-with-two-factor-authentication-2fa/).\n\nTo see the full details about an organization, the authenticated user must be an organization owner.\n\nOAuth app tokens and personal access tokens (classic) need the `admin:org` scope to see the full details about an organization.\n\nTo see information about an organization's GitHub Enterprise Cloud plan, GitHub Apps need the `Organization plan` permission.",
-        "tags": [
-          "orgs"
-        ],
-        "operationId": "orgs/get",
-        "externalDocs": {
-          "description": "API method documentation",
-          "url": "https://docs.github.com/enterprise-cloud@latest//rest/orgs/orgs#get-an-organization"
-        },
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/org"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/organization-full"
-                },
-                "examples": {
-                  "default-response": {
-                    "$ref": "#/components/examples/organization-full"
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "$ref": "#/components/responses/not_found"
-          }
-        },
-        "x-github": {
-          "githubCloudOnly": false,
-          "enabledForGitHubApps": true,
-          "category": "orgs",
-          "subcategory": "orgs"
-        }
-      }
-    }
   }
 }
