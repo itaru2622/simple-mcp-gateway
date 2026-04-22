@@ -34,17 +34,23 @@ make bash
 # usage
 ./src/mcp-gateway.py --help
 
-usage: mcp-gateway.py [-h] [-s SPEC] [-b BASEURL] [-a TOKEN] [-t TRANSPORT] [-p PORT] [-H HOST] [-l PATH] [-d LOG_LEVEL]
+usage: mcp-gateway.py [-h] [-s SPEC] [-b BASEURL]
+                      [-a TOKEN] [--authHeader AUTHHEADER] [--tokenPrefix TOKENPREFIX] [--sslVerify | --no-sslVerify]
+                      [-t TRANSPORT] [-p PORT] [-H HOST] [-l PATH] [-d LOG_LEVEL]
+
 options:
-  -h, --help                show this help message and exit
-  -s, --spec SPEC           OpenAPI spec file for gateway (json/yaml)
-  -b, --baseURL BASEURL     baseURL to REST Server
-  -a, --token TOKEN         bearer token to REST server
-  -t, --transport TRANSPORT MCP server transport
-  -p, --port PORT           MCP server port
-  -H, --host HOST           MCP server host to listen
-  -l, --path PATH           MCP server path to bind
-  -d, --log_level LOG_LEVEL MCP server log level
+  -h, --help                    show this help message and exit
+  -s, --spec SPEC               OpenAPI spec file for gateway (json/yaml)
+  -b, --baseURL BASEURL         baseURL to REST Server
+  -a, --token TOKEN             bearer token to REST server
+  --authHeader AUTHHEADER       Header name to fill token (default: 'Authorization')
+  --tokenPrefix TOKENPREFIX     prefix to token string (default: 'Bearer ')
+  --sslVerify, --no-sslVerify   SSL Verifyication      (default: True i.e. Verify)
+  -t, --transport TRANSPORT     MCP server transport
+  -p, --port PORT               MCP server port
+  -H, --host HOST               MCP server host to listen
+  -l, --path PATH               MCP server path to bind
+  -d, --log_level LOG_LEVEL     MCP server log level
 ```
 
 ```bash
