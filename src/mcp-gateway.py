@@ -41,6 +41,8 @@ if __name__ == '__main__':
     parser.add_argument('-s', '--spec',      help='OpenAPI spec file for gateway (json/yaml)', default='/dev/stdin')
     parser.add_argument('-b', '--baseURL',   help='baseURL to REST Server',                    default='')
     parser.add_argument('-a', '--token',     help='bearer token to REST server',               default=None)
+    parser.add_argument(      '--authHeader',help='Header name to fill token',                 default='Authorization')
+    parser.add_argument(      '--tokenPrefix',help='prefix to token string',                   default='Bearer ')
     parser.add_argument('-t', '--transport', help='MCP server transport',                      default='http')
     parser.add_argument('-p', '--port',      help='MCP server port',  type=int,                default=8888)
     parser.add_argument('-H', '--host',      help='MCP server host to listen',                 default='0.0.0.0')
@@ -51,7 +53,7 @@ if __name__ == '__main__':
     opts.headers = {}
 
     if opts.token not in [None, '']:
-         opts.headers.update(Authorization=f'Bearer {opts.token}')
+         opts.headers.update({ f'{opts.authHeader}' : f'{opts.tokenPrefix}{opts.token}' })
     print(f"opts: ########### {opts}", file=sys.stderr)
 
     #exit(0)
