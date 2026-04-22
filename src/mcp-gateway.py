@@ -44,6 +44,7 @@ if __name__ == '__main__':
     parser.add_argument('-a', '--token',     help='bearer token to REST server',               default=None)
     parser.add_argument(      '--authHeader',help='Header name to fill token',                 default=os.getenv('MCPGW_AUTH_HEADER','Authorization'))
     parser.add_argument(      '--tokenPrefix',help='prefix to token string',                   default=os.getenv('MCPGW_TOKEN_PREFIX','Bearer '))
+    parser.add_argument(      '--sslVerify', help='SSL Verifyication', action=argparse.BooleanOptionalAction,  default=os.getenv('MCPGW_SSL_VERIFY','True').lower() in ('true', 'yes', 't', 'y'))
     parser.add_argument('-t', '--transport', help='MCP server transport',                      default='http')
     parser.add_argument('-p', '--port',      help='MCP server port',  type=int,                default=8888)
     parser.add_argument('-H', '--host',      help='MCP server host to listen',                 default='0.0.0.0')
@@ -70,7 +71,7 @@ if __name__ == '__main__':
     spec = load(opts.spec)
 
     # cli to access REST Server.
-    cli = httpx.AsyncClient(base_url=opts.baseURL, headers=opts.headers ) # cli to REST Server.
+    cli = httpx.AsyncClient(base_url=opts.baseURL, headers=opts.headers, verify=opts.sslVerify ) # cli to REST Server.
 
     #asyncio.run( test( cli, "/orgs/..."))
     #exit(0)
