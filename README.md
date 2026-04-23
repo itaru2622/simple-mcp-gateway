@@ -103,6 +103,27 @@ cat sample/conf-mcpServers/ckan-mcp-gateway.yaml | ./src/double-mcp-gateway.py -
 fastmcp run --server-spec sample/mcp-servers/echo.py  --transport http --host 0.0.0.0 --port 8890
 ```
 
+- source: sample/mcp-servers/fileprovider.py
+
+```bash
+./sample/mcp-servers/fileprovider.py --transport http --host 0.0.0.0 --port 8890 -f /tmp
+
+# show helps
+./sample/mcp-servers/fileprovider.py -h
+usage: fileprovider.py [-h] [-f FOLDER] [-t TRANSPORT] [-p PORT] [-H HOST] [-l PATH] [-d LOG_LEVEL]
+
+options:
+  -h, --help            show this help message and exit
+  -f, --folder FOLDER   toplevel folder to manage
+  -t, --transport TRANSPORT
+                        MCP server transport
+  -p, --port PORT       MCP server port
+  -H, --host HOST       MCP server host to listen
+  -l, --path PATH       MCP server path to bind
+  -d, --log_level LOG_LEVEL
+                        MCP server log level
+```
+
 
 ## Sample MCP Client
 
