@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 
 from fastmcp import FastMCP
+from fastmcp.resources import FileResource
+from pydantic import FileUrl
+import mimetypes
 import pathlib
 import os
 import sys
@@ -48,6 +51,7 @@ def getFileContent(path: str ) -> str | bytes:
     # reject if requested file starts with '.'
     if  path.rsplit('/',1)[1].startswith('.'):
         return 'Error: Access denied.'
+
     # reject if requested file starts with '/'
     if  path.startswith('/'):
         return 'Error: Access denied.'
@@ -59,13 +63,27 @@ def getFileContent(path: str ) -> str | bytes:
     if not f.exists():
         return f'Error: File not found.'
 
-    # TODO: binary detection, smarter.
     if f.suffix.lower() in binary:
-        print(f'content=binary {f}')
+        print(f'content=binary {f}', file=sys.stderr)
         return f.read_bytes()
     else:
-        print(f'content=string {f}')
-        return f.read_text(encoding="utf-8")
+        print(f'content=text {f}', file=sys.stderr)
+        return f.read_text(encoding='utf-8')
+
+
+"""
+    # https://github.com/PrefectHQ/fastmcp/blob/main/tests/resources/test_file_resources.py
+    r = FileResource(uri=FileUrl(f'file:///{f}'),
+                     path=f,
+                     encoding='utf-8,
+                     mime_type = mimetypes.guess_type(f)[0],
+                     is_binary = f.suffix.lower() in binary
+                    )
+    rtn = await r.read()
+    return rtn.contents[0].content
+   #return rtn
+"""
+
 
 if __name__ == "__main__":
 
