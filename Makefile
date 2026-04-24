@@ -14,6 +14,9 @@ port_swagger         ?=8080
 ALLOWED_ORIGINS      ?=http://${myIP}:${port_inspector}
 GH_MCP_PAT           ?=changme
 
+# swagger version
+ver_swagger ?=$(shell curl -sL https://api.github.com/repos/swagger-api/swagger-editor/releases/latest | jq -r .tag_name)
+
 # list of yaml files in ${cDir}
 confs_yaml ?=$(shell find ${cDir} -type f | sort -f |  grep .yaml$$)
 
@@ -44,6 +47,7 @@ catConf:
 
 echo:
 	@echo "myIP: ${myIP}"
+	@echo "ver_swagger: ${ver_swagger}"
 
 # pack key=value pairs into _envs for easy docker compose ops
 _mk_vars:
@@ -59,5 +63,6 @@ _mk_vars:
 	port_mcpgateway=${port_mcpgateway} \
 	port_swagger=${port_swagger} \
 	docker_network=${docker_network} \
+	ver_swagger=${ver_swagger} \
 	" | cat))
 #	@echo ${_envs} | sed 's/ /\n/g' | awk -F= '{print $$1,"=",$$2}' | sed 's/ //g'
