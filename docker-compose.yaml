@@ -43,7 +43,7 @@ services:
 
 # swagger editor supporting openAPI v3.1 and try-it-out
   swagger:
-    image: docker.swagger.io/swaggerapi/swagger-editor:next-v5
+    image: docker.swagger.io/swaggerapi/swagger-editor:${ver_swagger}
     ports:
       - ${port_swagger}:80
     environment:
