@@ -1,22 +1,58 @@
 #!/usr/bin/env python
 
 from fastmcp import FastMCP
-from fastmcp.resources import FileResource
-from pydantic import FileUrl
+import base64
 import mimetypes
 import pathlib
 import os
 import sys
 import argparse
+from pydantic import BaseModel, Field
 
 # --------------
+
+class FormMultipartOption(BaseModel):
+    '''Metadata of file, like REST form/multipart metadata'''
+
+    filename: str=Field(description='filename')
+    contentType: str=Field(description='Content-Type. ";base64" indicates it requires base64 decode to get original raw data.',
+                           examples=['text/plain', 'image/jpg;base64', 'application/octet-stream;base64'])
+
+
+class FormMultipartFriendly(BaseModel):
+    '''REST form/multipart friendly class for MCP.
+
+    MCP considerations:
+    - MCP is based on JSON-RPC, so it CANNOT transfer binary as it is.
+    - to transfer binary in MCP, it requires base64 encode/decode for send/receive.
+    - to create the instance for binary file, add ';base64' in options.contentType as suffix and value needs to be base64 encoded.
+    - to get raw data from this instance, it requires base64 decode in case of binary, use getRawValue member function for instance.
+    '''
+
+    options: FormMultipartOption=Field(description='metadata of file, like form/multipart.')
+    value: str=Field(description='content of file in string.')
+
+    def getRawValue(self) -> str|bytes:
+        '''get the raw value according to the options.contentType.
+
+        Returns:
+        - str|bytes: raw data of value.
+        '''
+
+        # base64 encoded
+        if self.options.contentType.endswith(';base64'):
+            return base64.b64decode(self.value)
+
+        # other cases, text/*, or no ';base64' in contentType
+        return self.value
+
 
 mcp = FastMCP("FileProvider")
 
 @mcp.tool
-def listFiles(path: str='.') -> list[str]:
+def lsFiles(path: str='.') -> list[str]:
     '''
-    return list of files and folders specified in by the path(folder).
+    get list of files and folders specified by the path(folder).
 
     Args:
      - path(str) target path to get list of the files and folders.
@@ -37,15 +73,15 @@ def listFiles(path: str='.') -> list[str]:
     return sorted(items)
 
 @mcp.tool
-def getFileContent(path: str ) -> str | bytes:
+def getFileContent(path: str ) -> str | FormMultipartFriendly:
     '''
-    returns content of file specified by the path.
+    get content of file specified by the path.
 
     Args:
       - path(str): target file whose content wanted.
 
     Returns:
-      str|bytes: content of requested file.
+      str|FormMultipartFriendly: content of file(str or binary in json+base64 encoded).
     '''
 
     # reject if requested file starts with '.'
@@ -58,37 +94,34 @@ def getFileContent(path: str ) -> str | bytes:
 
     # ensure the path is under the managed dir.
     f = (dir / path).resolve()
-    binary = {'.png', '.jpg', 'jpeg', '.pdf', '.zip'}
-
     if not f.exists():
         return f'Error: File not found.'
 
-    if f.suffix.lower() in binary:
-        print(f'content=binary {f}', file=sys.stderr)
-        return f.read_bytes()
-    else:
+    # TODO: text/binary mimetype detection, smarter with python-magic magic.Magic(mime=True)
+    mime = mimetypes.guess_type(f)[0] or 'application/octet-stream'
+
+    if mime.startswith('text/'):
         print(f'content=text {f}', file=sys.stderr)
         return f.read_text(encoding='utf-8')
 
+    print(f'content=binary {f}', file=sys.stderr)
+    body = f.read_bytes()
+    blob = base64.b64encode( body  ).decode("utf-8")
+    mime += ';base64'
+    rtn = FormMultipartFriendly(value=blob, options=dict(filename=path, contentType=mime))
+    print(f'{len(rtn.getRawValue())=}', file=sys.stderr)
+    return rtn
 
-"""
-    # https://github.com/PrefectHQ/fastmcp/blob/main/tests/resources/test_file_resources.py
-    r = FileResource(uri=FileUrl(f'file:///{f}'),
-                     path=f,
-                     encoding='utf-8,
-                     mime_type = mimetypes.guess_type(f)[0],
-                     is_binary = f.suffix.lower() in binary
-                    )
-    rtn = await r.read()
-    return rtn.contents[0].content
-   #return rtn
-"""
-
+    """
+    alternative to FormMultipartFriendly
+    from mcp.types import EmbeddedResource, BlobResourceContents
+    return EmbeddedResource(type='resource', resource=BlobResourceContents(uri=f'file:///{path}', mimeType=mime, blob=blob) )
+    """
 
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('-f', '--folder',    help='toplevel folder to manage',                 default='/tmp')
+    parser.add_argument('-f', '--folder',    help='toplevel folder to serve',                  default='/tmp')
     parser.add_argument('-t', '--transport', help='MCP server transport',                      default='http')
     parser.add_argument('-p', '--port',      help='MCP server port',  type=int,                default=8890)
     parser.add_argument('-H', '--host',      help='MCP server host to listen',                 default='0.0.0.0')
@@ -102,9 +135,9 @@ if __name__ == "__main__":
     dir = pathlib.Path(opts.folder).resolve()
     dir.mkdir(exist_ok=True)
 
-    kwargs = dict(transport=opts.transport, log_level=opts.log_level)
+    kwargs = { k : v  for k, v in vars(opts).items() if k in ['transport', 'log_level'] }
     if opts.transport not in ['stdio']:
-        kwargs = { k : v  for k, v in vars(opts).items() if k in ['host', 'port', 'path', 'transport'] }
+        kwargs.update( { k : v  for k, v in vars(opts).items() if k in ['host', 'port', 'path']} )
     print(f'{kwargs=}', file=sys.stderr)
 
     mcp.run(**kwargs)
