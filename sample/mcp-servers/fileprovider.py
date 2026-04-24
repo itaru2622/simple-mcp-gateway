@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
 from fastmcp import FastMCP
+from fastmcp.utilities.types import File
+
 import base64
 import mimetypes
 import pathlib
@@ -72,10 +74,26 @@ def lsFiles(path: str='.') -> list[str]:
     items = [item.name for item in d.iterdir() if not item.name.startswith('.')]
     return sorted(items)
 
+# cf. https://github.com/PrefectHQ/fastmcp/blob/main/examples/get_file.py
+@mcp.tool()
+async def getFile2(path: str) -> File:
+        '''
+        get file from the server by the path in FORM style.
+
+        Args:
+        - path(str): file path to get.
+
+        Returns:
+        - File: instance of fastmcp.utilities.types.File
+        '''
+
+        return File(path=path)
+
+
 @mcp.tool
-def getFileContent(path: str ) -> str | FormMultipartFriendly:
+def getFile(path: str ) -> str | FormMultipartFriendly:
     '''
-    get content of file specified by the path.
+    get file content specified by the path in FormMultipartFriendly.
 
     Args:
       - path(str): target file whose content wanted.
