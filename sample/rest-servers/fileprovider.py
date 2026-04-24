@@ -1,6 +1,7 @@
 from fastapi import FastAPI, File, UploadFile, Response, Query, Body
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
+from typing import Annotated
 import io
 import sys
 import pathlib
@@ -94,8 +95,9 @@ def uploadByModel(file: FormMultipartFriendly = Body(..., description='file to u
     print(f'{rtn=}', file=sys.stderr)
     return rtn
 
+# cf. https://fastapi.tiangolo.com/tutorial/request-files/
 @app.post('/uploadByForm', operation_id='uploadByForm')
-async def uploadByForm(file: UploadFile = File(..., description='file to upload')) -> dict:
+async def uploadByForm(file: Annotated[UploadFile, File(..., description='file to upload')]) -> dict:
     '''Upload the file from client to server, with Form.
 
     Args:
