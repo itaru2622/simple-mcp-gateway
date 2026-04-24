@@ -4,9 +4,9 @@
 #
 mcpServers:
   testServer1:
-    transport: http
+    transport: streamable-http
     url: http://${myIP}:8888/mcp/
   testServer2:
-    transport: http
+    transport: streamable-http
     url: http://${myIP}:8890/mcp/
 
