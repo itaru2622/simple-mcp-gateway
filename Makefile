@@ -2,6 +2,7 @@
 wDir  ?=${PWD}
 sDir  ?=${wDir}/src
 cDir  ?=${wDir}/examples/conf-mcpServers
+eDir  ?=${wDir}/examples/src
 
 myIP  ?=$(shell ip addr|grep 'inet '|grep -v '\.1/'|tr -s ' '|awk '{$$1=$$1};1'|cut -d ' ' -f 2|cut -d '/' -f 1|paste -sd "," -|sed s/addr://g)
 #myIP ?=192.168.1.2
@@ -13,6 +14,7 @@ port_inspector_proxy ?=3001
 port_swagger         ?=8080
 ALLOWED_ORIGINS      ?=http://${myIP}:${port_inspector}
 GH_MCP_PAT           ?=changme
+pythonPATH           ?=${sDir}:${eDir}
 
 # swagger version
 ver_swagger ?=$(shell curl -sL https://api.github.com/repos/swagger-api/swagger-editor/releases/latest | jq -r .tag_name)
@@ -64,5 +66,6 @@ _mk_vars:
 	port_swagger=${port_swagger} \
 	docker_network=${docker_network} \
 	ver_swagger=${ver_swagger} \
+	pythonPATH=${pythonPATH} \
 	" | cat))
 #	@echo ${_envs} | sed 's/ /\n/g' | awk -F= '{print $$1,"=",$$2}' | sed 's/ //g'
