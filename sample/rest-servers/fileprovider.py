@@ -23,7 +23,7 @@ dir.mkdir(exist_ok=True)      # ensure folder exists
 
 # --------------
 
-class FormMultipartOption(BaseModel):
+class MyFormMultipartOption(BaseModel):
     '''Metadata of file, like REST form/multipart metadata'''
 
     filename: str=Field(description='filename with suffix, like any.jpg', examples=['any.jpg', 'any.txt'] )
@@ -31,7 +31,7 @@ class FormMultipartOption(BaseModel):
                            examples=[ 'image/jpg;base64', 'application/octet-stream;base64', 'text/plain'])
 
 
-class FormMultipartFriendly(BaseModel):
+class MyFormMultipartFriendly(BaseModel):
     '''REST form/multipart friendly class for MCP.
 
     MCP considerations:
@@ -46,7 +46,7 @@ class FormMultipartFriendly(BaseModel):
 
     '''
 
-    options: FormMultipartOption=Field(description='metadata of file, like form/multipart.')
+    options: MyFormMultipartOption=Field(description='metadata of file, like form/multipart.')
     value: str=Field(description='''content of file in string.
                                     NOTE: any control charactor caused runtime error, even base64 encoded string.
                                     When uploading binary, remove all newline from result of base64 encode.
@@ -67,15 +67,16 @@ class FormMultipartFriendly(BaseModel):
         # other cases, text/*, or no ';base64' in contentType
         return self.value
 
+# --------------
 
 app = FastAPI(title='upload/download test server')
 
-@app.post('/uploadByModel', operation_id='uploadByModel')
-def uploadByModel(file: FormMultipartFriendly = Body(..., description='file to upload')) -> dict:
+@app.post('/uploadByMyModel', operation_id='uploadByMyModel')
+def uploadByModel(file: MyFormMultipartFriendly = Body(..., description='file to upload')) -> dict:
     '''Upload the file from client to server, with Model.
 
     Args:
-     - file(FormMultipartFriendly): target file to upload
+     - file(MyFormMultipartFriendly): target file to upload
 
     Returns:
     - dict: contains filename and its size
