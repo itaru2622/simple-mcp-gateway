@@ -51,7 +51,20 @@ async def getFile2(path: str) -> File:
         - File: instance of fastmcp.utilities.types.File
         '''
 
-        return File(path=path)
+        # reject if requested file starts with '.'
+        if  '/' in path and path.rsplit('/',1)[1].startswith('.'):
+            return 'Error: Access denied.'
+
+        # reject if requested path starts with '/' or '.'
+        if  path.startswith(('/', '.')):
+            return 'Error: Access denied.'
+
+        # ensure the file is under the managed dir.
+        f = (dir / path).resolve()
+        if not f.exists():
+            return f'Error: File not found.'
+
+        return File(path=f)
 
 
 @mcp.tool
@@ -67,14 +80,14 @@ def getFile(path: str ) -> str | MyFormMultipartFriendly:
     '''
 
     # reject if requested file starts with '.'
-    if  path.rsplit('/',1)[1].startswith('.'):
+    if  '/' in path and path.rsplit('/',1)[1].startswith('.'):
         return 'Error: Access denied.'
 
-    # reject if requested file starts with '/'
-    if  path.startswith('/'):
+    # reject if requested path starts with '/' or '.'
+    if  path.startswith(('/', '.')):
         return 'Error: Access denied.'
 
-    # ensure the path is under the managed dir.
+    # ensure the file is under the managed dir.
     f = (dir / path).resolve()
     if not f.exists():
         return f'Error: File not found.'
