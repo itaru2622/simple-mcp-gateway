@@ -13,7 +13,7 @@ from pydantic import BaseModel, Field
 
 # --------------
 
-class FormMultipartOption(BaseModel):
+class MyFormMultipartOption(BaseModel):
     '''Metadata of file, like REST form/multipart metadata'''
 
     filename: str=Field(description='filename with suffix, like any.jpg', examples=['any.jpg', 'any.txt'] )
@@ -21,7 +21,7 @@ class FormMultipartOption(BaseModel):
                            examples=[ 'image/jpg;base64', 'application/octet-stream;base64', 'text/plain'])
 
 
-class FormMultipartFriendly(BaseModel):
+class MyFormMultipartFriendly(BaseModel):
     '''REST form/multipart friendly class for MCP.
 
     MCP considerations:
@@ -36,7 +36,7 @@ class FormMultipartFriendly(BaseModel):
 
     '''
 
-    options: FormMultipartOption=Field(description='metadata of file, like form/multipart.')
+    options: MyFormMultipartOption=Field(description='metadata of file, like form/multipart.')
     value: str=Field(description='''content of file in string.
                                     NOTE: any control charactor caused runtime error, even base64 encoded string.
                                     When uploading binary, remove all newline from result of base64 encode.
@@ -100,15 +100,15 @@ async def getFile2(path: str) -> File:
 
 
 @mcp.tool
-def getFile(path: str ) -> str | FormMultipartFriendly:
+def getFile(path: str ) -> str | MyFormMultipartFriendly:
     '''
-    get file content specified by the path in FormMultipartFriendly.
+    get file content specified by the path in MyFormMultipartFriendly.
 
     Args:
       - path(str): target file whose content wanted.
 
     Returns:
-      str|FormMultipartFriendly: content of file(str or binary in json+base64 encoded).
+      str|MyFormMultipartFriendly: content of file(str or binary in json+base64 encoded).
     '''
 
     # reject if requested file starts with '.'
@@ -135,12 +135,12 @@ def getFile(path: str ) -> str | FormMultipartFriendly:
     body = f.read_bytes()
     blob = base64.b64encode( body  ).decode("utf-8")
     mime += ';base64'
-    rtn = FormMultipartFriendly(value=blob, options=dict(filename=path, contentType=mime))
+    rtn = MyFormMultipartFriendly(value=blob, options=dict(filename=path, contentType=mime))
     print(f'{len(rtn.getRawValue())=}', file=sys.stderr)
     return rtn
 
     """
-    alternative to FormMultipartFriendly
+    alternative to MyFormMultipartFriendly
     from mcp.types import EmbeddedResource, BlobResourceContents
     return EmbeddedResource(type='resource', resource=BlobResourceContents(uri=f'file:///{path}', mimeType=mime, blob=blob) )
     """
