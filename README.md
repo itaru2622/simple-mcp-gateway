@@ -97,19 +97,19 @@ cat examples/conf-mcpServers/ckan-mcp-gateway.yaml | ./src/double-mcp-gateway.py
 
 ## Sample MCP Server
 
-- source: examples/mcp-servers/echo.py
+- source: examples/src/mcp-servers/echo.py
 
 ```bash
-fastmcp run --server-spec examples/mcp-servers/echo.py  --transport http --host 0.0.0.0 --port 8890
+fastmcp run --server-spec examples/src/mcp-servers/echo.py  --transport http --host 0.0.0.0 --port 8890
 ```
 
-- source: examples/mcp-servers/fileprovider.py
+- source: examples/src/mcp-servers/fileprovider.py
 
 ```bash
-./examples/mcp-servers/fileprovider.py --transport http --host 0.0.0.0 --port 8890 -f /tmp
+./examples/src/mcp-servers/fileprovider.py --transport http --host 0.0.0.0 --port 8890 -f /tmp
 
 # show helps
-./examples/mcp-servers/fileprovider.py -h
+./examples/src/mcp-servers/fileprovider.py -h
 usage: fileprovider.py [-h] [-f FOLDER] [-t TRANSPORT] [-p PORT] [-H HOST] [-l PATH] [-d LOG_LEVEL]
 
 options:
@@ -156,7 +156,7 @@ cat ./examples/openapi-specs/ghec-get-org-pruned-openapi31-validated.json | ./sr
 # cat ./examples/openapi-specs/ghec-get-org-pruned-openapi31-validated.json | ./src/mcp-gateway.py -b https://api.github.com --port 8888 -l /mcp/ -a YOUR_GITHUB_PAT
 
 # boot MCP server
-fastmcp run --server-spec ./examples/mcp-servers/echo.py  --transport http --host 0.0.0.0 --port 8890 --path /mcp/
+fastmcp run --server-spec ./examples/src/mcp-servers/echo.py  --transport http --host 0.0.0.0 --port 8890 --path /mcp/
 
 # boot mashup server all-in-one, with MCP to MCP Gateway
 cat ./examples/conf-mcpServers/test-servers.yaml | ./src/double-mcp-gateway.py --port 8889 -l /mcp/
