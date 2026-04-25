@@ -28,7 +28,7 @@ mcpServers:
 #     transport: stdio
 #     command: python
 #     args:
-#       - ${wDir}/sample/mcp-servers/ckan-mcp/mcp_ckan_server.py
+#       - ${wDir}/examples/mcp-servers/ckan-mcp/mcp_ckan_server.py
 #     env:
 #       LOG_LEVEL: INFO
 #       CKAN_URL: ${CKAN_URL}

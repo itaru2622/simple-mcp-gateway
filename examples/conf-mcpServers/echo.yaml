@@ -9,7 +9,7 @@ mcpServers:
     args:
       - run
       - --server-spec
-      - ${wDir}/sample/mcp-servers/echo.py
+      - ${wDir}/examples/mcp-servers/echo.py
       - --transport
       - stdio
 #     - http --host 0.0.0.0 --port 8890

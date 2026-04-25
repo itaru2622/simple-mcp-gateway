@@ -1,7 +1,7 @@
 
 wDir  ?=${PWD}
 sDir  ?=${wDir}/src
-cDir  ?=${wDir}/sample/conf-mcpServers
+cDir  ?=${wDir}/examples/conf-mcpServers
 
 myIP  ?=$(shell ip addr|grep 'inet '|grep -v '\.1/'|tr -s ' '|awk '{$$1=$$1};1'|cut -d ' ' -f 2|cut -d '/' -f 1|paste -sd "," -|sed s/addr://g)
 #myIP ?=192.168.1.2

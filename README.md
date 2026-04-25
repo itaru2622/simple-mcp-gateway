@@ -55,10 +55,10 @@ options:
 
 ```bash
 # example for REST service ( public/open area without auth ):
-cat sample/openapi-specs/ghec-get-org-pruned-openapi31-validated.json | ./src/mcp-gateway.py -b https://api.github.com
+cat examples/openapi-specs/ghec-get-org-pruned-openapi31-validated.json | ./src/mcp-gateway.py -b https://api.github.com
 
 # example for REST service with auth
-cat sample/openapi-specs/ghec-get-org-pruned-openapi31-validated.json | ./src/mcp-gateway.py -b https://api.github.com -a YOUR_GITHUB_PAT
+cat examples/openapi-specs/ghec-get-org-pruned-openapi31-validated.json | ./src/mcp-gateway.py -b https://api.github.com -a YOUR_GITHUB_PAT
 # Note this case has some security risk by proxying public/open <=> authorized space
 ```
 
@@ -86,30 +86,30 @@ options:
 
 ```bash
 # example
-cat sample/conf-mcpServers/echo.yaml | ./src/double-mcp-gateway.py
+cat examples/conf-mcpServers/echo.yaml | ./src/double-mcp-gateway.py
 ```
 
 ```bash
 # yet another example (gateway ckan mcp server on docker).
 export CKAN_URL=https://catalog.data.metro.tokyo.lg.jp
-cat sample/conf-mcpServers/ckan-mcp-gateway.yaml | ./src/double-mcp-gateway.py -l /mcp/
+cat examples/conf-mcpServers/ckan-mcp-gateway.yaml | ./src/double-mcp-gateway.py -l /mcp/
 ```
 
 ## Sample MCP Server
 
-- source: sample/mcp-servers/echo.py
+- source: examples/mcp-servers/echo.py
 
 ```bash
-fastmcp run --server-spec sample/mcp-servers/echo.py  --transport http --host 0.0.0.0 --port 8890
+fastmcp run --server-spec examples/mcp-servers/echo.py  --transport http --host 0.0.0.0 --port 8890
 ```
 
-- source: sample/mcp-servers/fileprovider.py
+- source: examples/mcp-servers/fileprovider.py
 
 ```bash
-./sample/mcp-servers/fileprovider.py --transport http --host 0.0.0.0 --port 8890 -f /tmp
+./examples/mcp-servers/fileprovider.py --transport http --host 0.0.0.0 --port 8890 -f /tmp
 
 # show helps
-./sample/mcp-servers/fileprovider.py -h
+./examples/mcp-servers/fileprovider.py -h
 usage: fileprovider.py [-h] [-f FOLDER] [-t TRANSPORT] [-p PORT] [-H HOST] [-l PATH] [-d LOG_LEVEL]
 
 options:
@@ -130,7 +130,7 @@ options:
 - source: src/llmclient.py
 
 ```bash
-cat ./sample/conf-mcpServers/test-servers.yaml | sed 's/transport: streamable-http/transport: streamable_http/g' | ./src/llmclient.py
+cat ./examples/conf-mcpServers/test-servers.yaml | sed 's/transport: streamable-http/transport: streamable_http/g' | ./src/llmclient.py
 ```
 
 ## Test all features:
@@ -149,20 +149,20 @@ make bash
 # all below commands should be operated in mcp-gateway container
 
 # boot MCP server with REST to MCP Gateway (for public spaces)
-cat ./sample/openapi-specs/ghec-get-org-pruned-openapi31-validated.json | ./src/mcp-gateway.py -b https://api.github.com --port 8888 -l /mcp/
+cat ./examples/openapi-specs/ghec-get-org-pruned-openapi31-validated.json | ./src/mcp-gateway.py -b https://api.github.com --port 8888 -l /mcp/
 
 # boot MCP server with REST to MCP Gateway (with public and authorized spaces)
 # Note this case has some security risk by proxying public/open <=> authorized space
-# cat ./sample/openapi-specs/ghec-get-org-pruned-openapi31-validated.json | ./src/mcp-gateway.py -b https://api.github.com --port 8888 -l /mcp/ -a YOUR_GITHUB_PAT
+# cat ./examples/openapi-specs/ghec-get-org-pruned-openapi31-validated.json | ./src/mcp-gateway.py -b https://api.github.com --port 8888 -l /mcp/ -a YOUR_GITHUB_PAT
 
 # boot MCP server
-fastmcp run --server-spec ./sample/mcp-servers/echo.py  --transport http --host 0.0.0.0 --port 8890 --path /mcp/
+fastmcp run --server-spec ./examples/mcp-servers/echo.py  --transport http --host 0.0.0.0 --port 8890 --path /mcp/
 
 # boot mashup server all-in-one, with MCP to MCP Gateway
-cat ./sample/conf-mcpServers/test-servers.yaml | ./src/double-mcp-gateway.py --port 8889 -l /mcp/
+cat ./examples/conf-mcpServers/test-servers.yaml | ./src/double-mcp-gateway.py --port 8889 -l /mcp/
 
 # test with client
-cat ./sample/conf-mcpServers/test-servers.yaml  | sed 's/transport: streamable-http/transport: streamable_http/g' | ./src/llmclient.py
+cat ./examples/conf-mcpServers/test-servers.yaml  | sed 's/transport: streamable-http/transport: streamable_http/g' | ./src/llmclient.py
 ```
 
  - then access MCP Inspector with your browser ( i.e. http://${myIP}:3000/?MCP_PROXY_PORT=3001 )
