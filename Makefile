@@ -43,7 +43,7 @@ docker-pull: _mk_vars
 
 # hacks to join yaml files with document separator('---')
 catConf:
-	@awk 'FNR==1 && NR!=1 {print "---"}{print}' ${confs_yaml} | ./src/mergeYaml.py -e -s
+	@awk 'FNR==1 && NR!=1 {print "---"}{print}' ${confs_yaml} | ./src/tools/mergeYaml.py -e -s
 
 echo:
 	@echo "myIP: ${myIP}"
