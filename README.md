@@ -127,10 +127,10 @@ options:
 
 ## Sample MCP Client
 
-- source: src/llmclient.py
+- source: src/clients/llmclient.py
 
 ```bash
-cat ./examples/conf-mcpServers/test-servers.yaml | sed 's/transport: streamable-http/transport: streamable_http/g' | ./src/llmclient.py
+cat ./examples/conf-mcpServers/test-servers.yaml | sed 's/transport: streamable-http/transport: streamable_http/g' | ./src/clients/llmclient.py
 ```
 
 ## Test all features:
@@ -162,7 +162,7 @@ fastmcp run --server-spec ./examples/src/mcp-servers/echo.py  --transport http -
 cat ./examples/conf-mcpServers/test-servers.yaml | ./src/double-mcp-gateway.py --port 8889 -l /mcp/
 
 # test with client
-cat ./examples/conf-mcpServers/test-servers.yaml  | sed 's/transport: streamable-http/transport: streamable_http/g' | ./src/llmclient.py
+cat ./examples/conf-mcpServers/test-servers.yaml  | sed 's/transport: streamable-http/transport: streamable_http/g' | ./src/clients/llmclient.py
 ```
 
  - then access MCP Inspector with your browser ( i.e. http://${myIP}:3000/?MCP_PROXY_PORT=3001 )
