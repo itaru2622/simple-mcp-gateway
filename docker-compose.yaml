@@ -16,7 +16,7 @@ services:
       - sDir=${sDir}
       - myIP=${myIP}
       - GH_MCP_PAT=${GH_MCP_PAT}
-      - PYTHONPATH=${sDir}
+      - PYTHONPATH=${pythonPATH}
       - DOCKER_DRIVER=vfs
     volumes:
       - ${wDir}:${wDir}
