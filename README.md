@@ -27,12 +27,12 @@ make bash
 
 ## Gateway (MCP <=> REST)
 
-- source: src/mcp-gateway.py
+- source: src/gateways/mcp-gateway.py
 - input:  OpenAPI spec file ( openapi v3.0 or 3.1), required json schema friendly format.
 
 ```bash
 # usage
-./src/mcp-gateway.py --help
+./src/gateways/mcp-gateway.py --help
 
 usage: mcp-gateway.py [-h] [-s SPEC] [-b BASEURL]
                       [-a TOKEN] [--authHeader AUTHHEADER] [--tokenPrefix TOKENPREFIX] [--sslVerify | --no-sslVerify]
@@ -55,22 +55,22 @@ options:
 
 ```bash
 # example for REST service ( public/open area without auth ):
-cat examples/openapi-specs/ghec-get-org-pruned-openapi31-validated.json | ./src/mcp-gateway.py -b https://api.github.com
+cat examples/openapi-specs/ghec-get-org-pruned-openapi31-validated.json | ./src/gateways/mcp-gateway.py -b https://api.github.com
 
 # example for REST service with auth
-cat examples/openapi-specs/ghec-get-org-pruned-openapi31-validated.json | ./src/mcp-gateway.py -b https://api.github.com -a YOUR_GITHUB_PAT
+cat examples/openapi-specs/ghec-get-org-pruned-openapi31-validated.json | ./src/gateways/mcp-gateway.py -b https://api.github.com -a YOUR_GITHUB_PAT
 # Note this case has some security risk by proxying public/open <=> authorized space
 ```
 
 
 ## Gateway (MCP <=> MCP)
 
-- source: src/double-mcp-gateway.py
+- source: src/gateways/double-mcp-gateway.py
 - input:  MCP Server config
 
 ```bash
 # usage
-./src/double-mcp-gateway.py --help
+./src/gateways/double-mcp-gateway.py --help
 
 usage: double-mcp-gateway.py [-h] [-s SPEC] [-t TRANSPORT] [-p PORT] [-H HOST] [-l PATH] [-d LOG_LEVEL]
 options:
@@ -86,13 +86,13 @@ options:
 
 ```bash
 # example
-cat examples/conf-mcpServers/echo.yaml | ./src/double-mcp-gateway.py
+cat examples/conf-mcpServers/echo.yaml | ./src/gateways/double-mcp-gateway.py
 ```
 
 ```bash
 # yet another example (gateway ckan mcp server on docker).
 export CKAN_URL=https://catalog.data.metro.tokyo.lg.jp
-cat examples/conf-mcpServers/ckan-mcp-gateway.yaml | ./src/double-mcp-gateway.py -l /mcp/
+cat examples/conf-mcpServers/ckan-mcp-gateway.yaml | ./src/gateways/double-mcp-gateway.py -l /mcp/
 ```
 
 ## Sample MCP Server
@@ -149,17 +149,17 @@ make bash
 # all below commands should be operated in mcp-gateway container
 
 # boot MCP server with REST to MCP Gateway (for public spaces)
-cat ./examples/openapi-specs/ghec-get-org-pruned-openapi31-validated.json | ./src/mcp-gateway.py -b https://api.github.com --port 8888 -l /mcp/
+cat ./examples/openapi-specs/ghec-get-org-pruned-openapi31-validated.json | ./src/gateways/mcp-gateway.py -b https://api.github.com --port 8888 -l /mcp/
 
 # boot MCP server with REST to MCP Gateway (with public and authorized spaces)
 # Note this case has some security risk by proxying public/open <=> authorized space
-# cat ./examples/openapi-specs/ghec-get-org-pruned-openapi31-validated.json | ./src/mcp-gateway.py -b https://api.github.com --port 8888 -l /mcp/ -a YOUR_GITHUB_PAT
+# cat ./examples/openapi-specs/ghec-get-org-pruned-openapi31-validated.json | ./src/gateways/mcp-gateway.py -b https://api.github.com --port 8888 -l /mcp/ -a YOUR_GITHUB_PAT
 
 # boot MCP server
 fastmcp run --server-spec ./examples/src/mcp-servers/echo.py  --transport http --host 0.0.0.0 --port 8890 --path /mcp/
 
 # boot mashup server all-in-one, with MCP to MCP Gateway
-cat ./examples/conf-mcpServers/test-servers.yaml | ./src/double-mcp-gateway.py --port 8889 -l /mcp/
+cat ./examples/conf-mcpServers/test-servers.yaml | ./src/gateways/double-mcp-gateway.py --port 8889 -l /mcp/
 
 # test with client
 cat ./examples/conf-mcpServers/test-servers.yaml  | sed 's/transport: streamable-http/transport: streamable_http/g' | ./src/clients/llmclient.py
