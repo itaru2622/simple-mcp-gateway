@@ -17,7 +17,7 @@ fastmcp run --server-spec src/gateways/mcp-gateway.py --transport streamable-htt
 """
 
 from fastmcp import FastMCP
-from fastmcp.server.providers.openapi import (RouteMap, MCPType)
+from fastmcp.server.providers.openapi import (OpenAPIProvider, RouteMap, MCPType)
 from typing import Any
 import httpx
 import yaml
@@ -43,7 +43,7 @@ parser.add_argument(      '--authHeader',help='Header name to fill token',      
 parser.add_argument(      '--tokenPrefix',help='prefix to token string',                   default=os.getenv('MCPGW_TOKEN_PREFIX','Bearer '))
 parser.add_argument(      '--sslVerify', help='SSL Verifyication', action=argparse.BooleanOptionalAction,  default=os.getenv('MCPGW_SSL_VERIFY','True').lower() in ('true', 'yes', 't', 'y'))
 parser.add_argument('-l', '--log-level', help='MCP server log level',                      default='DEBUG')
-parser.add_argument('--banner', help='temporal to discard',  action=argparse.BooleanOptionalAction, default=True)
+parser.add_argument('--banner', help='temporal to discard',  action=argparse.BooleanOptionalAction, default=True) # workaround without https://github.com/itaru2622/jlowin-fastmcp/tree/fix-issue4081
 
 opts = parser.parse_args()
 opts.headers = {}
@@ -58,10 +58,15 @@ print(f'opts: ########### {opts}', file=sys.stderr)
 #
 
 configFastMcpLogger(level=opts.log_level, log_time_format='%Y-%m-%d %H:%M:%S')
-for comp in [ 'fastmcp.experimental.utilities.openapi.director',
-              'fastmcp.experimental.server.openapi.components',
-              'fastmcp.experimental.server.openapi.server',
-              'FullRelayMiddleware']:
+for comp in [ 'fastmcp.utilities.openapi.director',
+              'fastmcp.server.providers.openapi.components',
+              'fastmcp.server.providers.openapi.server',
+              'fastmcp.server.providers.openapi.provider',
+              'fastmcp.server.providers.openapi.routing',
+              'fastmcp.utilities.openapi.parser',
+              'fastmcp.server.server',
+              'FullRelayMiddleware'
+            ]:
     configFastMcpLogger(level=opts.log_level, logger=get_logger(comp), log_time_format='%Y-%m-%d %H:%M:%S')
 
 #logging.basicConfig(level=logging.DEBUG) # Configure root logger
@@ -78,7 +83,10 @@ route_maps = [
    RouteMap(mcp_type=MCPType.TOOL),
 ]
 
-mcp = FastMCP.from_openapi(spec, client=cli, route_maps=route_maps)
+# cf. https://github.com/PrefectHQ/fastmcp/blob/main/src/fastmcp/server/providers/openapi/provider.py
+provider = OpenAPIProvider(openapi_spec=spec, client=cli, route_maps=route_maps)
+mcp = FastMCP(name='MCP<=>OpenAPI Gateway')
+mcp.add_provider(provider, namespace='')
 
 #printf(f'######### {mcp.settings=}', file=sys.stderr)
 
@@ -124,10 +132,15 @@ if __name__ == '__main__':
 
     #exit(0)
     configFastMcpLogger(level=opts.log_level, log_time_format='%Y-%m-%d %H:%M:%S')
-    for comp in [ 'fastmcp.experimental.utilities.openapi.director',
-                  'fastmcp.experimental.server.openapi.components',
-                  'fastmcp.experimental.server.openapi.server',
-                  'FullRelayMiddleware']:
+    for comp in [ 'fastmcp.utilities.openapi.director',
+                  'fastmcp.server.providers.openapi.components',
+                  'fastmcp.server.providers.openapi.server',
+                  'fastmcp.server.providers.openapi.provider',
+                  'fastmcp.server.providers.openapi.routing',
+                  'fastmcp.utilities.openapi.parser',
+                  'fastmcp.server.server',
+                  'FullRelayMiddleware'
+                ]:
         configFastMcpLogger(level=opts.log_level, logger=get_logger(comp), log_time_format='%Y-%m-%d %H:%M:%S')
 
     #logging.basicConfig(level=logging.DEBUG) # Configure root logger
@@ -144,8 +157,10 @@ if __name__ == '__main__':
        RouteMap(mcp_type=MCPType.TOOL),
     ]
 
-    mcp = FastMCP.from_openapi(spec, client=cli, route_maps=route_maps)
-
+    # cf. https://github.com/PrefectHQ/fastmcp/blob/main/src/fastmcp/server/providers/openapi/provider.py
+    provider = OpenAPIProvider(openapi_spec=spec, client=cli, route_maps=route_maps)
+    mcp = FastMCP(name='MCP<=>OpenAPI Gateway')
+    mcp.add_provider(provider, namespace='')
 
     mcp.add_middleware(FullRelayMiddleware())
     '''
