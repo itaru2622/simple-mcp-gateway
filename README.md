@@ -32,12 +32,16 @@ make bash
 
 ```bash
 # usage
-./src/gateways/mcp-gateway.py --help
 
+fastmcp run --server-spec src/gateways/mcp-gateway.py \
+            --transport streamable-http --host 0.0.0.0 --port 8888 --path /mcp/ -l DEBUG \
+            --reload --reload-dir src/gateways --reload-dir examples/openapi-specs  \
+            -- -s openAPI.yaml -b ...
+
+./src/gateways/mcp-gateway.py --help
 usage: mcp-gateway.py [-h] [-s SPEC] [-b BASEURL]
                       [-a TOKEN] [--authHeader AUTHHEADER] [--tokenPrefix TOKENPREFIX] [--sslVerify | --no-sslVerify]
-                      [-t TRANSPORT] [-p PORT] [-H HOST] [-l PATH] [-d LOG_LEVEL]
-
+                      [-l LOG_LEVEL]
 options:
   -h, --help                    show this help message and exit
   -s, --spec SPEC               OpenAPI spec file for gateway (json/yaml)
@@ -46,19 +50,23 @@ options:
   --authHeader AUTHHEADER       Header name to fill token (default: 'Authorization')
   --tokenPrefix TOKENPREFIX     prefix to token string (default: 'Bearer ')
   --sslVerify, --no-sslVerify   SSL Verifyication      (default: True i.e. Verify)
-  -t, --transport TRANSPORT     MCP server transport
-  -p, --port PORT               MCP server port
-  -H, --host HOST               MCP server host to listen
-  -l, --path PATH               MCP server path to bind
-  -d, --log_level LOG_LEVEL     MCP server log level
+  -l, --log-level LOG_LEVEL     MCP server log level
 ```
 
 ```bash
 # example for REST service ( public/open area without auth ):
-cat examples/openapi-specs/ghec-get-org-pruned-openapi31-validated.json | ./src/gateways/mcp-gateway.py -b https://api.github.com
+fastmcp run --server-spec src/gateways/mcp-gateway.py \
+            --transport streamable-http --host 0.0.0.0 --port 8888 --path /mcp/ -l DEBUG \
+            --reload --reload-dir src/gateways --reload-dir examples/openapi-specs  \
+            -- -s examples/openapi-specs/ghec-get-org-pruned-openapi31-validated.json \
+               -b https://api.github.com
 
 # example for REST service with auth
-cat examples/openapi-specs/ghec-get-org-pruned-openapi31-validated.json | ./src/gateways/mcp-gateway.py -b https://api.github.com -a YOUR_GITHUB_PAT
+fastmcp run --server-spec src/gateways/mcp-gateway.py \
+            --transport streamable-http --host 0.0.0.0 --port 8888 --path /mcp/ -l DEBUG \
+            --reload --reload-dir src/gateways --reload-dir examples/openapi-specs  \
+            -- -s examples/openapi-specs/ghec-get-org-pruned-openapi31-validated.json \
+               -b https://api.github.com  -a YOUR_GITHUB_PAT -l DEBUG
 # Note this case has some security risk by proxying public/open <=> authorized space
 ```
 
