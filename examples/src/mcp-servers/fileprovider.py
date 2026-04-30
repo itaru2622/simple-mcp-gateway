@@ -1,5 +1,12 @@
 #!/usr/bin/env python
 
+"""
+
+# to start, fastmmcp run [any options of fastmcp] --(double dash) [options for server] like below:
+fastmcp run --server-spec ./examples/src/mcp-servers/fileprovider.py --transport http --host 0.0.0.0 --port 8890 --path /mcp/ -l debug --reload --  --folder /tmp/test
+
+"""
+
 from fastmcp import FastMCP
 from fastmcp.utilities.types import File
 
@@ -12,6 +19,21 @@ import argparse
 
 # myown
 from mytypes import MyFormMultipartFriendly
+
+#--------------------
+# option handling
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-f', '--folder',    help='toplevel folder to serve',                  default='/tmp')
+opts = parser.parse_args()
+
+print(f'{opts=}', file=sys.stderr)
+#exit(0)
+
+dir = pathlib.Path(opts.folder).resolve()
+dir.mkdir(exist_ok=True)
+
+#--------------------
 
 mcp = FastMCP("FileProvider")
 
@@ -113,14 +135,14 @@ def getFile(path: str ) -> str | MyFormMultipartFriendly:
     return EmbeddedResource(type='resource', resource=BlobResourceContents(uri=f'file:///{path}', mimeType=mime, blob=blob) )
     """
 
+"""
 if __name__ == "__main__":
-
     parser = argparse.ArgumentParser()
-    parser.add_argument('-f', '--folder',    help='toplevel folder to serve',                  default='/tmp')
+    parser.add_argument('-f', '--folder',    help='toplevel folder to serve',                  default='/tmp/test')
     parser.add_argument('-t', '--transport', help='MCP server transport',                      default='http')
     parser.add_argument('-p', '--port',      help='MCP server port',  type=int,                default=8890)
     parser.add_argument('-H', '--host',      help='MCP server host to listen',                 default='0.0.0.0')
-    parser.add_argument('-l', '--path',      help='MCP server path to bind',                   default='/mcp')
+    parser.add_argument('-l', '--path',      help='MCP server path to bind',                   default='/mcp/')
     parser.add_argument('-d', '--log_level', help='MCP server log level',                      default='DEBUG')
     opts = parser.parse_args()
 
@@ -136,3 +158,4 @@ if __name__ == "__main__":
     print(f'{kwargs=}', file=sys.stderr)
 
     mcp.run(**kwargs)
+"""
