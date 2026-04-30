@@ -30,6 +30,40 @@ from fastmcp.utilities.logging import get_logger, configure_logging as configFas
 from FullRelayMiddleware import FullRelayMiddleware
 from utils.conf import load
 
+"""
+# to start, fastmcp run [options for fastmcp] --(double dash) [options for server-spec], like below
+fastmcp run --server-spec ./src/gateways/double-mcp-gateway.py --transport streamable-http --host 0.0.0.0 --port 8889 --path /mcp/ --reload --reload-dir ./src/gateways --reload-dir ./examples/conf-mcpServers  -- -s mcp-server-config.yaml ...
+
+"""
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-s', '--spec',      help='backend MCP server config (json|yaml|url)', default='/dev/stdin')
+parser.add_argument('-l', '--log-level', help='MCP server log level',                      default='DEBUG')
+opts = parser.parse_args()
+
+spec = load(opts.spec)
+# exit(0)
+
+configFastMcpLogger(level=opts.log_level)
+for comp in [ 'fastmcp.experimental.utilities.openapi.director',
+              'fastmcp.experimental.server.openapi.components',
+              'fastmcp.experimental.server.openapi.server',
+              'fastmcp.resources.resource_manager',
+              'fastmcp.utilities.components',
+              'FullRelayMiddleware']:
+    configFastMcpLogger(level=opts.log_level, logger=get_logger(comp))
+
+#logging.basicConfig(level=logging.DEBUG) # Configure root logger
+
+mcp = create_proxy(spec, name='MCP to MCP gateway') # create instance as MCP<=>MCP proxy.
+mcp.add_middleware(FullRelayMiddleware())
+'''
+logger = get_logger('fastmcp.server.middleware.logging.LoggingMiddleware')
+logger.setLevel(opts.log_level)
+mcp.add_middleware(LoggingMiddleware(logger=logger, log_level=opts.log_level))
+'''
+
 
 async def test(cli, uri) -> Any:
     rtn = await cli.get(uri)
@@ -38,6 +72,7 @@ async def test(cli, uri) -> Any:
     print(f'{rtn}', file=sys.stderr)
 
 
+"""
 if __name__ == '__main__':
 
 
@@ -54,12 +89,12 @@ if __name__ == '__main__':
     # exit(0)
 
     configFastMcpLogger(level=opts.log_level)
-    for comp in [ "fastmcp.experimental.utilities.openapi.director",
-                  "fastmcp.experimental.server.openapi.components",
-                  "fastmcp.experimental.server.openapi.server",
-                  "fastmcp.resources.resource_manager",
-                  "fastmcp.utilities.components",
-                  "FullRelayMiddleware"]:
+    for comp in [ 'fastmcp.experimental.utilities.openapi.director',
+                  'fastmcp.experimental.server.openapi.components',
+                  'fastmcp.experimental.server.openapi.server',
+                  'fastmcp.resources.resource_manager',
+                  'fastmcp.utilities.components',
+                  'FullRelayMiddleware']:
         configFastMcpLogger(level=opts.log_level, logger=get_logger(comp))
 
     #logging.basicConfig(level=logging.DEBUG) # Configure root logger
@@ -76,5 +111,6 @@ if __name__ == '__main__':
     if opts.transport not in ['stdio']:
         kwargs = { k : v  for k, v in vars(opts).items() if k in ['host', 'port', 'path', 'transport', 'log_level' ] }
 
-    print(f"{kwargs=}", file=sys.stderr)
+    print(f'{kwargs=}', file=sys.stderr)
     mcp.run(**kwargs) # run instance.
+"""
