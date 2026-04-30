@@ -78,29 +78,35 @@ fastmcp run --server-spec src/gateways/mcp-gateway.py \
 
 ```bash
 # usage
-./src/gateways/double-mcp-gateway.py --help
+fastmcp run --server-spec src/gateways/double-mcp-gateway.py \
+            --transport streamable-http --host 0.0.0.0 --port 8889 --path /mcp/ -l DEBUG \
+            --reload --reload-dir src/gateways --reload-dir ./examples/conf-mcpServers \
+            -- -s mcp-server-config.yaml
 
-usage: double-mcp-gateway.py [-h] [-s SPEC] [-t TRANSPORT] [-p PORT] [-H HOST] [-l PATH] [-d LOG_LEVEL]
+./src/gateways/double-mcp-gateway.py --help
+usage: double-mcp-gateway.py [-h] [-s SPEC] [-l LOG_LEVEL]
 options:
   -h, --help                   show this help message and exit
   -s, --spec SPEC              backend MCP server config (json|yaml|url)
-  -t, --transport TRANSPORT    MCP server transport
-  -p, --port PORT              MCP server port
-  -H, --host HOST              MCP server host to listen
-  -l, --path PATH              MCP server path to bind
-  -d, --log_level LOG_LEVEL    MCP server log level
+  -l, --log_level LOG_LEVEL    MCP server log level
 
 ```
 
 ```bash
 # example
-cat examples/conf-mcpServers/echo.yaml | ./src/gateways/double-mcp-gateway.py
+fastmcp run --server-spec src/gateways/double-mcp-gateway.py \
+            --transport streamable-http --host 0.0.0.0 --port 8889 --path /mcp/ -l DEBUG \
+            --reload --reload-dir src/gateways --reload-dir ./examples/conf-mcpServers \
+            -- -s examples/conf-mcpServers/echo.yaml
 ```
 
 ```bash
 # yet another example (gateway ckan mcp server on docker).
 export CKAN_URL=https://catalog.data.metro.tokyo.lg.jp
-cat examples/conf-mcpServers/ckan-mcp-gateway.yaml | ./src/gateways/double-mcp-gateway.py -l /mcp/
+fastmcp run --server-spec src/gateways/double-mcp-gateway.py \
+            --transport streamable-http --host 0.0.0.0 --port 8889 --path /mcp/ -l DEBUG \
+            --reload --reload-dir src/gateways --reload-dir ./examples/conf-mcpServers \
+            -- -s examples/conf-mcpServers/ckan-mcp-gateway.yaml
 ```
 
 ## Sample MCP Server
