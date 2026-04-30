@@ -106,22 +106,18 @@ fastmcp run --server-spec examples/src/mcp-servers/echo.py  --transport http --h
 - source: examples/src/mcp-servers/fileprovider.py
 
 ```bash
-./examples/src/mcp-servers/fileprovider.py --transport http --host 0.0.0.0 --port 8890 -f /tmp
+fastmcp run --server-spec examples/src/mcp-servers/fileprovider.py --transport http --host 0.0.0.0 --port 8890 --path /mcp/ -l debug --reload --  --folder /tmp/test
 
-# show helps
+# show helps for fileprovider.py
 ./examples/src/mcp-servers/fileprovider.py -h
-usage: fileprovider.py [-h] [-f FOLDER] [-t TRANSPORT] [-p PORT] [-H HOST] [-l PATH] [-d LOG_LEVEL]
 
+usage: fileprovider.py [-h] [-f FOLDER]
 options:
-  -h, --help            show this help message and exit
-  -f, --folder FOLDER   toplevel folder to manage
-  -t, --transport TRANSPORT
-                        MCP server transport
-  -p, --port PORT       MCP server port
-  -H, --host HOST       MCP server host to listen
-  -l, --path PATH       MCP server path to bind
-  -d, --log_level LOG_LEVEL
-                        MCP server log level
+  -f, --folder FOLDER  toplevel folder to serve
+  -h, --help           show this help message and exit
+
+# show helps for fastmcp run command:
+fastmcp run -h
 ```
 
 
