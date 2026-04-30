@@ -159,17 +159,26 @@ make bash
 # all below commands should be operated in mcp-gateway container
 
 # boot MCP server with REST to MCP Gateway (for public spaces)
-cat ./examples/openapi-specs/ghec-get-org-pruned-openapi31-validated.json | ./src/gateways/mcp-gateway.py -b https://api.github.com --port 8888 -l /mcp/
+fastmcp run --server-spec src/gateways/mcp-gateway.py \
+            --transport streamable-http --host 0.0.0.0 --port 8888 --path /mcp/ -l DEBUG \
+            --reload --reload-dir src/gateways --reload-dir examples/openapi-specs  \
+            -- -s ./examples/openapi-specs/ghec-get-org-pruned-openapi31-validated.json -b https://api.github.com
 
 # boot MCP server with REST to MCP Gateway (with public and authorized spaces)
 # Note this case has some security risk by proxying public/open <=> authorized space
-# cat ./examples/openapi-specs/ghec-get-org-pruned-openapi31-validated.json | ./src/gateways/mcp-gateway.py -b https://api.github.com --port 8888 -l /mcp/ -a YOUR_GITHUB_PAT
+#fastmcp run --server-spec src/gateways/mcp-gateway.py \
+#           --transport streamable-http --host 0.0.0.0 --port 8888 --path /mcp/ -l DEBUG \
+#           --reload --reload-dir src/gateways --reload-dir examples/openapi-specs  \
+#           -- -s ./examples/openapi-specs/ghec-get-org-pruned-openapi31-validated.json -b https://api.github.com -a YOUR_GITHUB_PAT
 
 # boot MCP server
 fastmcp run --server-spec ./examples/src/mcp-servers/echo.py  --transport http --host 0.0.0.0 --port 8890 --path /mcp/
 
 # boot mashup server all-in-one, with MCP to MCP Gateway
-cat ./examples/conf-mcpServers/test-servers.yaml | ./src/gateways/double-mcp-gateway.py --port 8889 -l /mcp/
+fastmcp run --server-spec src/gateways/double-mcp-gateway.py \
+            --transport streamable-http --host 0.0.0.0 --port 8889 --path /mcp/ -l DEBUG \
+            --reload --reload-dir src/gateways --reload-dir ./examples/conf-mcpServers \
+            -- -s ./examples/conf-mcpServers/test-servers.yaml
 
 # test with client
 cat ./examples/conf-mcpServers/test-servers.yaml  | sed 's/transport: streamable-http/transport: streamable_http/g' | ./src/clients/llmclient.py
