@@ -10,6 +10,12 @@
 #   - message forwarding among User/AI/LLM <=> MCP <=> existing REST server.
 #
 
+"""
+# to start, fastmcp run [options for fastmcp] --(double dash) [options for server-spec], like below
+fastmcp run --server-spec src/gateways/mcp-gateway.py --transport streamable-http --host 0.0.0.0 --port 8888 --path /mcp/ --reload --reload-dir src/gateways --reload-dir examples/openapi-specs  -- -s openAPI.yaml -b ...
+
+"""
+
 from fastmcp import FastMCP
 from fastmcp.server.providers.openapi import (RouteMap, MCPType)
 from typing import Any
@@ -27,6 +33,63 @@ from fastmcp.utilities.logging import get_logger, configure_logging as configFas
 from FullRelayMiddleware import FullRelayMiddleware
 from utils.conf import load
 
+#---------
+# option handling
+parser = argparse.ArgumentParser('mcp-gateway')
+parser.add_argument('-s', '--spec',      help='OpenAPI spec file for gateway (json/yaml)', default='/dev/stdin')
+parser.add_argument('-b', '--baseURL',   help='baseURL to REST Server',                    default='')
+parser.add_argument('-a', '--token',     help='bearer token to REST server',               default=None)
+parser.add_argument(      '--authHeader',help='Header name to fill token',                 default=os.getenv('MCPGW_AUTH_HEADER','Authorization'))
+parser.add_argument(      '--tokenPrefix',help='prefix to token string',                   default=os.getenv('MCPGW_TOKEN_PREFIX','Bearer '))
+parser.add_argument(      '--sslVerify', help='SSL Verifyication', action=argparse.BooleanOptionalAction,  default=os.getenv('MCPGW_SSL_VERIFY','True').lower() in ('true', 'yes', 't', 'y'))
+parser.add_argument('-l', '--log-level', help='MCP server log level',                      default='DEBUG')
+parser.add_argument('--banner', help='temporal to discard',  action=argparse.BooleanOptionalAction, default=True)
+
+opts = parser.parse_args()
+opts.headers = {}
+
+if opts.token not in [None, '']:
+     opts.headers.update({ f'{opts.authHeader}' : f'{opts.tokenPrefix}{opts.token}' })
+print(f'opts: ########### {opts}', file=sys.stderr)
+
+#exit(0)
+#
+# starts logic
+#
+
+configFastMcpLogger(level=opts.log_level, log_time_format='%Y-%m-%d %H:%M:%S')
+for comp in [ 'fastmcp.experimental.utilities.openapi.director',
+              'fastmcp.experimental.server.openapi.components',
+              'fastmcp.experimental.server.openapi.server',
+              'FullRelayMiddleware']:
+    configFastMcpLogger(level=opts.log_level, logger=get_logger(comp), log_time_format='%Y-%m-%d %H:%M:%S')
+
+#logging.basicConfig(level=logging.DEBUG) # Configure root logger
+
+spec = load(opts.spec)
+
+# cli to access REST Server.
+cli = httpx.AsyncClient(base_url=opts.baseURL, headers=opts.headers, verify=opts.sslVerify ) # cli to REST Server.
+
+#asyncio.run( test( cli, '/orgs/...'))
+#exit(0)
+
+route_maps = [
+   RouteMap(mcp_type=MCPType.TOOL),
+]
+
+mcp = FastMCP.from_openapi(spec, client=cli, route_maps=route_maps)
+
+#printf(f'######### {mcp.settings=}', file=sys.stderr)
+
+mcp.add_middleware(FullRelayMiddleware())
+'''
+logger = get_logger('fastmcp.server.middleware.logging.LoggingMiddleware')
+logger.setLevel(opts.log_level)
+mcp.add_middleware(LoggingMiddleware(logger=logger, log_level=opts.log_level))
+'''
+
+#---------
 
 async def test(cli, uri) -> Any:
     rtn = await cli.get(uri)
@@ -35,6 +98,7 @@ async def test(cli, uri) -> Any:
     print(f'{rtn}', file=sys.stderr)
 
 
+"""
 if __name__ == '__main__':
 
 
@@ -56,14 +120,14 @@ if __name__ == '__main__':
 
     if opts.token not in [None, '']:
          opts.headers.update({ f'{opts.authHeader}' : f'{opts.tokenPrefix}{opts.token}' })
-    print(f"opts: ########### {opts}", file=sys.stderr)
+    print(f'opts: ########### {opts}', file=sys.stderr)
 
     #exit(0)
     configFastMcpLogger(level=opts.log_level, log_time_format='%Y-%m-%d %H:%M:%S')
-    for comp in [ "fastmcp.experimental.utilities.openapi.director",
-                  "fastmcp.experimental.server.openapi.components",
-                  "fastmcp.experimental.server.openapi.server",
-                  "FullRelayMiddleware"]:
+    for comp in [ 'fastmcp.experimental.utilities.openapi.director',
+                  'fastmcp.experimental.server.openapi.components',
+                  'fastmcp.experimental.server.openapi.server',
+                  'FullRelayMiddleware']:
         configFastMcpLogger(level=opts.log_level, logger=get_logger(comp), log_time_format='%Y-%m-%d %H:%M:%S')
 
     #logging.basicConfig(level=logging.DEBUG) # Configure root logger
@@ -73,12 +137,10 @@ if __name__ == '__main__':
     # cli to access REST Server.
     cli = httpx.AsyncClient(base_url=opts.baseURL, headers=opts.headers, verify=opts.sslVerify ) # cli to REST Server.
 
-    #asyncio.run( test( cli, "/orgs/..."))
+    #asyncio.run( test( cli, '/orgs/...'))
     #exit(0)
 
     route_maps = [
-#      RouteMap(methods=["GET"], pattern=r".*\{.*\}.*", mcp_type=MCPType.RESOURCE_TEMPLATE),
-#      RouteMap(methods=["GET"], pattern=r".*",         mcp_type=MCPType.RESOURCE),
        RouteMap(mcp_type=MCPType.TOOL),
     ]
 
@@ -96,5 +158,6 @@ if __name__ == '__main__':
     if opts.transport not in ['stdio']:
         kwargs = { k : v  for k, v in vars(opts).items() if k in ['host', 'port', 'path', 'transport', 'log_level' ] }
 
-    print(f"{kwargs=}", file=sys.stderr)
+    print(f'{kwargs=}', file=sys.stderr)
     mcp.run(**kwargs)
+"""
