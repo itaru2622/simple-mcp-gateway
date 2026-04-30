@@ -43,6 +43,7 @@ parser.add_argument(      '--authHeader',help='Header name to fill token',      
 parser.add_argument(      '--tokenPrefix',help='prefix to token string',                   default=os.getenv('MCPGW_TOKEN_PREFIX','Bearer '))
 parser.add_argument(      '--sslVerify', help='SSL Verifyication', action=argparse.BooleanOptionalAction,  default=os.getenv('MCPGW_SSL_VERIFY','True').lower() in ('true', 'yes', 't', 'y'))
 parser.add_argument('-l', '--log-level', help='MCP server log level',                      default='DEBUG')
+parser.add_argument(      '--validate',  help='FastMCP openAPI validation_output', action=argparse.BooleanOptionalAction,  default=False) # relaxing openAPI parser by skip output schema validation.
 parser.add_argument('--banner', help='temporal to discard',  action=argparse.BooleanOptionalAction, default=True) # workaround without https://github.com/itaru2622/jlowin-fastmcp/tree/fix-issue4081
 
 opts = parser.parse_args()
@@ -84,7 +85,7 @@ route_maps = [
 ]
 
 # cf. https://github.com/PrefectHQ/fastmcp/blob/main/src/fastmcp/server/providers/openapi/provider.py
-provider = OpenAPIProvider(openapi_spec=spec, client=cli, route_maps=route_maps)
+provider = OpenAPIProvider(openapi_spec=spec, client=cli, route_maps=route_maps, validate_output=opts.validate)
 mcp = FastMCP(name='MCP<=>OpenAPI Gateway')
 mcp.add_provider(provider, namespace='')
 
@@ -122,6 +123,7 @@ if __name__ == '__main__':
     parser.add_argument('-H', '--host',      help='MCP server host to listen',                 default='0.0.0.0')
     parser.add_argument('-l', '--path',      help='MCP server path to bind',                   default='/mcp')
     parser.add_argument('-d', '--log_level', help='MCP server log level',                      default='DEBUG')
+    parser.add_argument(      '--validate',  help='FastMCP openAPI validation_output', action=argparse.BooleanOptionalAction,  default=False) # relaxing openAPI parser by skip output schema validation.
     opts = parser.parse_args()
 
     opts.headers = {}
@@ -158,7 +160,7 @@ if __name__ == '__main__':
     ]
 
     # cf. https://github.com/PrefectHQ/fastmcp/blob/main/src/fastmcp/server/providers/openapi/provider.py
-    provider = OpenAPIProvider(openapi_spec=spec, client=cli, route_maps=route_maps)
+    provider = OpenAPIProvider(openapi_spec=spec, client=cli, route_maps=route_maps, validate_output=opts.validate)
     mcp = FastMCP(name='MCP<=>OpenAPI Gateway')
     mcp.add_provider(provider, namespace='')
 
