@@ -2,40 +2,102 @@
 
 """
 
-# to start, fastmmcp run [any options of fastmcp] --(double dash) [options for server] like below:
-fastmcp run --server-spec ./examples/src/mcp-servers/fileprovider.py --transport http --host 0.0.0.0 --port 8890 --path /mcp/ -l debug --reload --  --folder /tmp/test
+# to start
+
+# case1) with fastmcp run command
+
+folder=/tmp/test  \
+fastmcp run --server-spec ./examples/src/mcp-servers/fileprovider.py:mcp --transport http --host 0.0.0.0 --port 8890 --path /mcp/ -l DEBUG --reload
+
+# case2) with uvicorn/ASGI tool
+
+FASTMCP_LOG_LEVEL=DEBUG   PYTHONPATH=./:${PYTHONPATH} \
+transport=streamable-http mount=/mcp/ \
+folder=/tmp/test uvicorn  examples.src.mcp-servers.fileprovider:app --host 0.0.0.0 --port 8890 --reload --reload-include './example/src/**.py' --reload-include './src/**.py'
 
 """
 
-from fastmcp import FastMCP
-from fastmcp.utilities.types import File
-
+from   fastmcp import FastMCP
+from   fastmcp.utilities.types import File
 import base64
 import mimetypes
 import pathlib
 import os
 import sys
-import argparse
+# option handling
+from   pydantic_settings import BaseSettings, SettingsConfigDict
+from   pydantic import Field
+from   fastmcp.settings import Settings  as FastmcpSettings # optional, fastmcp-scoped pydantic-settings
+# for ASGI friendly
+from   fastapi import FastAPI
 
 # myown
-from mytypes import MyFormMultipartFriendly
+from   mytypes import MyFormMultipartFriendly
+
 
 #--------------------
-# option handling
+# app option handling is empowered by pydantic-settings, to make app independent from deployment tool.
+#
+# deployment tools  | unit for watch/reload | app option handling
+# ------------------+-----------------------+-----------------------------------------------------
+# FastMCP run cmd   | reload-dir ONLY       | pydantic-settings + argparse (after double-dash ' -- ')
+# uvicorn           | + reload-[in|ex]clude | pydantic-settings ONLY
+# other ASGI tool   | same as uvicorn     =====>
+#
+# i.e: when app option is empowered by pydantic-settings, any can deploy the app as described aboves.
+#
 
-parser = argparse.ArgumentParser()
-parser.add_argument('-f', '--folder',    help='toplevel folder to serve',                  default='/tmp')
-opts = parser.parse_args()
+class Settings(BaseSettings):
+    ''' Settings for the app.
 
+        NG:  use commandline options.
+        OK:  compatible with env style, like below:
+
+        folder=/tmp/test2 fastcmp run this:mcp --host 0.0.0.0 --port 8888 --path=/mcp/ --transport streamable-http
+        folder=/tmp/test2 mount=/mcp/ transport=streamable-http   uvicorn this:app --host 0.0.0.0 --port 8888
+
+        to print this help: python -c "from fileprovider import help; help()"
+    '''
+    folder: str = Field('/tmp/test', description='Folder to manage/store uploaded file(s)')
+    path: str   = Field('/mcp/',     description='Mount path, applied when ASGI deploy tool used', alias='mount') # avoid conflicts with env:PATH. use mount in env/shell, but path in app
+    transport: str = Field('streamable-http', description='MCP Transport Layer, applied when ASGI deploy tool used.')
+    # fastmcp: FastmcpSettings|None = Field({}, description='FastMCP Config detected via fastmcp-scoped env vars') # valid only if fastmcp scoped envs are used.
+
+    # tune config: extras:notFORBITTEN, .env and env_prefix. those are tunable via envs of APPENVFILE, and PREFIX_APPENV
+    model_config = SettingsConfigDict(extra='allow', env_file=os.getenv('APPENVFILE', '.env'), env_prefix=os.getenv('PREFIX_APPENV', ''), env_nested_delimiter="__")
+    # NOTE https://pydantic.dev/docs/validation/latest/concepts/pydantic_settings/#command-line-support doesn't work with ASGI/fastmcp
+
+
+# get and parse options
+opts = Settings()
 print(f'{opts=}', file=sys.stderr)
-#exit(0)
+#----------------------
 
+# prepare folder to manager uploaded files.
 dir = pathlib.Path(opts.folder).resolve()
 dir.mkdir(exist_ok=True)
 
 #--------------------
 
 mcp = FastMCP("FileProvider")
+
+# empowering deployment by ASGI/FastAPI
+#  - https://github.com/PrefectHQ/fastmcp/blob/main/docs/deployment/http.mdx
+#  - https://github.com/PrefectHQ/fastmcp/blob/main/docs/integrations/fastapi.mdx
+
+mcp4asgi = mcp.http_app(path='/', transport=opts.transport)
+app = FastAPI(title="FastAPI app for FastMCP/ASGI", lifespan=mcp4asgi.lifespan)
+app.mount(opts.path, mcp4asgi)
+
+# ready to deploy, with tools:
+# - NOTE: uppercase words has to be managed by deployment tool, by env vars in tool-scope or commandline options
+#
+# fastmcp run ...:mcp       => http://HOST:PORT/MOUNT
+# uvicorn     ...:app       => http://HOST:PORT/mcp/  //  mount=/mcp/          transport=streamable-http
+# uvicorn     ...:mcp4asgi  => http://HOST:PORT/      //  mcp.http_app(path=/) transport=streamable-http
+
+
+# definitions of MCP tool -------------------
 
 @mcp.tool
 def lsFiles(path: str='.') -> list[str]:
@@ -135,27 +197,9 @@ def getFile(path: str ) -> str | MyFormMultipartFriendly:
     return EmbeddedResource(type='resource', resource=BlobResourceContents(uri=f'file:///{path}', mimeType=mime, blob=blob) )
     """
 
-"""
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-f', '--folder',    help='toplevel folder to serve',                  default='/tmp/test')
-    parser.add_argument('-t', '--transport', help='MCP server transport',                      default='http')
-    parser.add_argument('-p', '--port',      help='MCP server port',  type=int,                default=8890)
-    parser.add_argument('-H', '--host',      help='MCP server host to listen',                 default='0.0.0.0')
-    parser.add_argument('-l', '--path',      help='MCP server path to bind',                   default='/mcp/')
-    parser.add_argument('-d', '--log_level', help='MCP server log level',                      default='DEBUG')
-    opts = parser.parse_args()
+def help():
+    '''just print help'''
 
-    print(f'{opts=}', file=sys.stderr)
-    #exit(0)
-
-    dir = pathlib.Path(opts.folder).resolve()
-    dir.mkdir(exist_ok=True)
-
-    kwargs = { k : v  for k, v in vars(opts).items() if k in ['transport', 'log_level'] }
-    if opts.transport not in ['stdio']:
-        kwargs.update( { k : v  for k, v in vars(opts).items() if k in ['host', 'port', 'path']} )
-    print(f'{kwargs=}', file=sys.stderr)
-
-    mcp.run(**kwargs)
-"""
+    from pydantic_settings import CliApp
+    sys.argv = [sys.argv[0], "--help"]
+    CliApp.run(Settings)
