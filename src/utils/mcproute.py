@@ -1,7 +1,8 @@
-from typing import Any, Callable, Dict, List, Optional, Tuple, TypeVar, Union
-from fastmcp import FastMCP
+from typing import Any, Callable, overload
+from mcp.types import AnyFunction
 
-T = TypeVar("T", bound=Callable[..., Any])
+from fastmcp import FastMCP
+from fastmcp.server.server import F
 
 class MCPRouter:
     """A class for managing MCP components independently of the main FastMCP instance.
@@ -46,13 +47,17 @@ class MCPRouter:
         """
         Initialize the MCPRouter with isolated registries for each component type.
         """
-        self._tools:              List[Tuple[T, Tuple[Any, ...], Dict[str, Any]]] = []
-        self._resources:          List[Tuple[T, Tuple[Any, ...], Dict[str, Any]]] = []
-        self._resource_templates: List[Tuple[T, Tuple[Any, ...], Dict[str, Any]]] = []
-        self._prompts:            List[Tuple[T, Tuple[Any, ...], Dict[str, Any]]] = []
+        self._tools:              list[tuple[F, tuple[Any, ...], dict[str, Any]]] = []
+        self._resources:          list[tuple[F, tuple[Any, ...], dict[str, Any]]] = []
+        self._prompts:            list[tuple[F, tuple[Any, ...], dict[str, Any]]] = []
 
+    @overload
+    def tool(self, name_or_fn: F, **kwargs: Any) -> F: ...
 
-    def tool(self, name_or_fn: Union[str, T, None] = None, **kwargs: Any) -> Union[T,  Callable[[T], T]]:
+    @overload
+    def tool(self, name_or_fn: str | None = None,**kwargs: Any) -> Callable[[F], F]: ...
+
+    def tool(self, name_or_fn: str | F | None = None, **kwargs: Any) -> (F | Callable[[F], F]):
         """Keep a tool definition, for later registration.
 
         Args:
@@ -62,7 +67,7 @@ class MCPRouter:
         Returns:
             The decorated function or a decorator function.
         """
-        def decorator(func: T) -> T:
+        def decorator(func: F) -> F:
             # Store name as a positional argument if provided as a string
             args = (name_or_fn,) if isinstance(name_or_fn, str) else ()
             self._tools.append((func, args, kwargs))
@@ -73,7 +78,7 @@ class MCPRouter:
         return decorator
 
 
-    def resource(self, uri_or_fn: Union[str, T, None] = None, **kwargs: Any) -> Union[T,  Callable[[T], T]]:
+    def resource(self, uri: str , **kwargs: Any) -> (F |  Callable[[F], F]):
         """Keep a resource definition, for later registration.
 
         Args:
@@ -83,38 +88,21 @@ class MCPRouter:
         Returns:
             The decorated function or a decorator function.
         """
-        def decorator(func: T) -> T:
-            # Store URI as a positional argument if provided as a string
-            args = (uri_or_fn,) if isinstance(uri_or_fn, str) else ()
+        def decorator(func: F) -> F:
+            args = (uri,)
             self._resources.append((func, args, kwargs))
             return func
 
-        if callable(uri_or_fn):
-            return decorator(uri_or_fn)
         return decorator
 
 
-    def resource_template(self, uri_template_or_fn: Union[str, T, None] = None, **kwargs: Any) -> Union[T,  Callable[[T], T]]:
-        """Keep a resource_template definition, for later registration.
-
-        Args:
-            uri_template_or_fn: The URI template or the function itself.
-            **kwargs: Additional keyword arguments for template configuration.
-
-        Returns:
-            The decorated function or a decorator function.
-        """
-        def decorator(func: T) -> T:
-            args = (uri_template_or_fn,) if isinstance(uri_template_or_fn, str) else ()
-            self._resource_templates.append((func, args, kwargs))
-            return func
-
-        if callable(uri_template_or_fn):
-            return decorator(uri_template_or_fn)
-        return decorator
-
-
-    def prompt(self, name_or_fn: Union[str, T, None] = None, **kwargs: Any) -> Union[T,  Callable[[T], T]]:
+    @overload
+    def prompt(self, name_or_fn: F, **kwargs: Any) -> F: ...
+    
+    @overload
+    def prompt(self, name_or_fn: str | None = None, **kwargs: Any) -> Callable[[F], F]: ...
+    
+    def prompt(self, name_or_fn: str | F | None = None, **kwargs: Any) -> (F | Callable[[F], F]) :
         """Keep a prompt definition, for later registration.
 
         Args:
@@ -124,7 +112,7 @@ class MCPRouter:
         Returns:
             The decorated function or a decorator function.
         """
-        def decorator(func: T) -> T:
+        def decorator(func: F) -> F:
             args = (name_or_fn,) if isinstance(name_or_fn, str) else ()
             self._prompts.append((func, args, kwargs))
             return func
@@ -151,10 +139,6 @@ class MCPRouter:
         # for resources
         for func, args, kwargs in self._resources:
             mcp.resource(*args, **kwargs)(func)
-
-        # for resource templates
-        for func, args, kwargs in self._resource_templates:
-            mcp.resource_template(*args, **kwargs)(func)
 
         # for prompts
         for func, args, kwargs in self._prompts:
