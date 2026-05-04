@@ -7,13 +7,13 @@
 # case1) with fastmcp run command
 
 folder=/tmp/test  \
-fastmcp run --server-spec ./examples/src/mcp-servers/fileprovider.py:mcp --transport http --host 0.0.0.0 --port 8890 --path /mcp/ -l DEBUG --reload
+fastmcp run --server-spec ./examples/src/mcpservers/fileprovider.py:mcp --transport http --host 0.0.0.0 --port 8890 --path /mcp/ -l DEBUG --reload
 
 # case2) with uvicorn/ASGI tool
 
 FASTMCP_LOG_LEVEL=DEBUG   PYTHONPATH=./:${PYTHONPATH} \
 transport=streamable-http mount=/mcp/ \
-folder=/tmp/test uvicorn  examples.src.mcp-servers.fileprovider:app --host 0.0.0.0 --port 8890 --reload --reload-include './example/src/**.py' --reload-include './src/**.py'
+folder=/tmp/test uvicorn  examples.src.mcpservers.fileprovider:app --host 0.0.0.0 --port 8890 --reload --reload-include './example/src/**.py' --reload-include './src/**.py'
 
 """
 
