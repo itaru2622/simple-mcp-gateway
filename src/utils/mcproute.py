@@ -5,7 +5,7 @@ from fastmcp import FastMCP
 from fastmcp.server.server import F
 
 class MCPRouter:
-    """A class for managing MCP components independently of the main FastMCP instance.
+    '''A class for managing MCP components independently of the main FastMCP instance.
 
     This class allows you to define and categorize MCP tools, resources, and prompts separately 
     from the main FastMCP instance for better modularity, as APIRouter does in FastAPI.
@@ -13,20 +13,36 @@ class MCPRouter:
     Attributes:
         _tools:              List of tool definitions to be registered.
         _resources:          List of resource definitions to be registered.
-        _resource_templates: List of resource template definitions to be registered.
         _prompts:            List of prompt definitions to be registered.
 
     Usage:
 
     # in featureA.py -------------
+    # almost the same as official echo sample, except using @router instead of @mcp
+    # cf. https://github.com/modelcontextprotocol/python-sdk/blob/main/examples/mcpserver/echo.py
 
-    from utils.mcproute import MCPRoute
-    router = MCPRouter()
+    from utils.mcprouter import MCPRouter
 
     # simply, create and use @router, instead of @mcp
-    @router.tool()
-    def hello_world(str: name) -> str:
-       return f'Hello, {name}!'
+    router = MCPRouter()
+
+    @router.tool
+    def echo_tool(text: str) -> str:
+        """Echo the input text"""
+        return text
+
+    @router.resource("echo://static")
+    def echo_resource() -> str:
+        return "Echo!"
+
+    @router.resource("echo://{text}")
+    def echo_template(text: str) -> str:
+        """Echo the input text"""
+        return f"Echo: {text}"
+
+    @router.prompt("echo")
+    def echo_prompt(text: str) -> str:
+        return text
 
     # in app.py --------
 
@@ -41,7 +57,7 @@ class MCPRouter:
     if __name__ == '__main__':
         mcp.run()
 
-    """
+    '''
 
     def __init__(self) -> None:
         """
