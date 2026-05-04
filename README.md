@@ -120,15 +120,29 @@ fastmcp run --server-spec examples/src/mcp-servers/echo.py  --transport http --h
 - source: examples/src/mcp-servers/fileprovider.py
 
 ```bash
-fastmcp run --server-spec examples/src/mcp-servers/fileprovider.py --transport http --host 0.0.0.0 --port 8890 --path /mcp/ -l debug --reload --  --folder /tmp/test
+folder=/tmp/test  \
+fastmcp run --server-spec ./examples/src/mcp-servers/fileprovider.py:mcp --transport http --host 0.0.0.0 --port 8890 --path /mcp/ -l DEBUG --reload
+
 
 # show helps for fileprovider.py
-./examples/src/mcp-servers/fileprovider.py -h
+python -c "from fileprovider import help; help()"
 
-usage: fileprovider.py [-h] [-f FOLDER]
+usage: -c [-h] [--folder str] [--mount str] [--transport str]
+Settings for the app.
+
+NG:  use commandline options.
+OK:  compatible with env style, like below:
+
+folder=/tmp/test2 fastcmp run this:mcp --host 0.0.0.0 --port 8888 --path /mcp/ --transport streamable-http 
+folder=/tmp/test2 mount=/mcp/ transport=streamable-http   uvicorn this:app --host 0.0.0.0 --port 8888
+
+to print this help:  python -c "from fileprovider import help; help()"
+
 options:
-  -f, --folder FOLDER  toplevel folder to serve
-  -h, --help           show this help message and exit
+  -h, --help       show this help message and exit
+  --folder str     Folder to manage/store uploaded file(s) (default: /tmp/test)
+  --mount str      Mount path, applied when ASGI deploy tool using (default: /mcp/)
+  --transport str  MCP Transport Layer, applied when ASGI deploy tool using. (default: streamable-http)
 
 # show helps for fastmcp run command:
 fastmcp run -h
