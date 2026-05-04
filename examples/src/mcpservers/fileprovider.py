@@ -24,6 +24,7 @@ import mimetypes
 import pathlib
 import os
 import sys
+from typing import Any
 # option handling
 from   pydantic_settings import BaseSettings, SettingsConfigDict
 from   pydantic import Field
@@ -121,6 +122,36 @@ def lsFiles(path: str='.') -> list[str]:
     # returns the list of files, folders excepts hidden files
     items = [item.name for item in d.iterdir() if not item.name.startswith('.')]
     return sorted(items)
+
+@mcp.tool()
+async def uploadFile(file: MyFormMultipartFriendly) -> dict[str,Any] :
+    '''
+    upload file in MyFormMultipartFriendly way.
+
+    NOTE: upload binary file is supported only when:
+      - It is base64 encoded before sending <= limitation by MCP/JSON-RPC
+      - base64 string value doesn't contain any CTRL charactor, including new-line. <= by latest JSON Parser.
+      - to meet above condtion, encode has to be done as below command:
+        ``` cat binary | base64 | tr -d '[:cntrl:] ```
+
+    Args:
+        - file (MyFormMultipartFriendly): target file in json with base64 encoded when binary.
+
+    Returns:
+        - dict containing filename and its size (after base64 decoded when binary).
+    '''
+
+    path = file.options.filename
+    f = (dir / path).resolve()
+
+    v = file.value
+    if file.options.contentType.endswith(';base64'):
+       v = base64.b64decode(v)
+       f.write_bytes(v)
+    else:
+       f.write_text(v, encoding="utf-8")
+
+    return dict(filename=path, size=f.stat().st_size)
 
 # cf. https://github.com/PrefectHQ/fastmcp/blob/main/examples/get_file.py
 @mcp.tool()
