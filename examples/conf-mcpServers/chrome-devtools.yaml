@@ -1,0 +1,23 @@
+#
+# mcp server configuration
+# '${...}' will be replaced by the value of corresponding environment variable at runtime.
+#
+mcpServers:
+  chromeDevtools:
+#   cf. https://github.com/ChromeDevTools/chrome-devtools-mcp
+#
+#   requires: chrome browser pre-installed.
+#
+#   command: npx -y chrome-devtools-mcp@latest --headless --executablePath=/usr/bin/chromium  --chromeArg=--no-sandbox --chromeArg=--disable-dev-shm-usage --no-usage-statistics --no-performance-crux
+#   command: chrome-devtools-mcp               --headless --executablePath=/usr/bin/chromium  --chromeArg=--no-sandbox --chromeArg=--disable-dev-shm-usage --no-usage-statistics --no-performance-crux
+    transport: stdio
+    command: npx
+    args:
+      - -y
+      - chrome-devtools-mcp@latest
+#     - --executablePath=/usr/bin/chromium
+      - --headless
+      - --chromeArg=--no-sandbox
+      - --chromeArg=--disable-dev-shm-usage
+      - --no-usage-statistics
+      - --no-performance-crux
