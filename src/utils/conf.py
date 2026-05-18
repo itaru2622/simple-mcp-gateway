@@ -104,6 +104,7 @@ def mergeDicts(*dicts: dict) -> dict:
     # kick helper function, to merge all dicts into one.
     return reduce(lambda x, y: dict(merge(x, y)), dicts[1:], dicts[0])
 
+
 if __name__ == '__main__':
     '''
     Examples:
@@ -111,4 +112,7 @@ if __name__ == '__main__':
     - awk 'FNR==1 && NR!=1 {print "---"}{print}' *.yaml | python3 ./utils.py
     '''
     d = load()
-    print( json.dumps(d, ensure_ascii=False, indent=2), file=sys.stdout)
+    if isinstance(d, (str,)):
+        print(d)
+    else:
+        print( json.dumps(d, ensure_ascii=False, indent=2), file=sys.stdout)
