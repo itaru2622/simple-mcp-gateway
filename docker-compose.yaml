@@ -28,7 +28,7 @@ services:
 
   # MCP inspector
   inspector:
-    image: node:22-trixie
+    image: node:24-trixie
     ports:
       - ${port_inspector}:${port_inspector}
       - ${port_inspector_proxy}:${port_inspector_proxy}
