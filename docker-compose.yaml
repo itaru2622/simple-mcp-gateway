@@ -37,8 +37,10 @@ services:
       - CLIENT_PORT=${port_inspector}
       - SERVER_PORT=${port_inspector_proxy}
       - HOST=0.0.0.0
+      - PORT=${port_inspector}
       - ALLOWED_ORIGINS=${ALLOWED_ORIGINS}
     command: npx @modelcontextprotocol/inspector
+#   command: tail -f /dev/null
     volumes:
       - ${wDir}:${wDir}
     restart: always
