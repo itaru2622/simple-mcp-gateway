@@ -39,15 +39,15 @@ services:
       - HOST=0.0.0.0
       - PORT=${port_inspector}
       - ALLOWED_ORIGINS=${ALLOWED_ORIGINS}
-    command: npx @modelcontextprotocol/inspector
-#   command: tail -f /dev/null
+    command: npx @modelcontextprotocol/inspector@1.0.0
+    # inspector v2.0.0 has trouble on use, issue 1845 (Couldn't access platform storage: PermissionDenied)
     volumes:
       - ${wDir}:${wDir}
     restart: always
 
 # swagger editor supporting openAPI v3.1 and try-it-out
   swagger:
-    image: docker.swagger.io/swaggerapi/swagger-editor:${ver_swagger}
+    image: swaggerapi/swagger-editor:${ver_swagger}
     ports:
       - ${port_swagger}:80
     environment:
