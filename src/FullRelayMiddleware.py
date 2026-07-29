@@ -1,10 +1,10 @@
 from fastmcp.server.middleware import Middleware, MiddlewareContext, CallNext
-from fastmcp.tools.tool import Tool
-from fastmcp.prompts.prompt import Prompt
-from fastmcp.resources.resource import Resource
-from fastmcp.resources.template import ResourceTemplate
+from fastmcp.tools import Tool
+from fastmcp.prompts import Prompt
+from fastmcp.resources import Resource
+from fastmcp.resources import ResourceTemplate
 from fastmcp.utilities.logging import get_logger
-import mcp.types as mt
+import mcp_types as mt
 
 import logging
 
