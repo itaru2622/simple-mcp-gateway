@@ -195,7 +195,7 @@ fastmcp run --server-spec src/gateways/double-mcp-gateway.py \
             -- -s ./examples/conf-mcpServers/test-servers.yaml
 
 # test with client
-cat ./examples/conf-mcpServers/test-servers.yaml  | sed 's/transport: streamable-http/transport: streamable_http/g' | ./src/clients/llmclient.py
+cat ./examples/conf-mcpServers/test-servers.yaml  | ./src/clients/llmclient.py
 ```
 
  - then access MCP Inspector with your browser ( i.e. http://${myIP}:3000/?MCP_PROXY_PORT=3001 )
