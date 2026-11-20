@@ -5,7 +5,7 @@ import warnings
 warnings.filterwarnings("ignore", message=".*Pydantic V1 functionality isn't compatible with.*")
 # ends workaround : add  code to ignore warning
 
-from   langchain_mcp_adapters.client import MultiServerMCPClient
+from   langchain.mcp import MCPAdapter
 #from   langchain_openai import AzureChatOpenAI
 #from   langgraph.prebuilt import create_react_agent
 #from   langchain_core.prompts import ChatPromptTemplate
@@ -29,20 +29,22 @@ async def test(conf:dict[str,Any]={}, msg:dict[str,Any]={}, **kwargs: Any) -> An
       - Any: result
     '''
 
-    client = MultiServerMCPClient( conf.get('mcpServers') )
-    tools = await client.get_tools()
+    cfg = {"mcpServers": conf.get('mcpServers') }
+    async with MCPAdapter(cfg) as adapter:
+        tools = await adapter.list_tools()
+        print(tools)
 
-    # apiKey = os.environ['CHATAI_API_KEY']
-    # apiURL = os.environ['CHATAI_URL']
-    # llm = AzureChatOpenAI( api_key=apiKey, azure_endpoint=apiURL, openai_api_version='DUMMY',)
-    # agent = create_react_agent(llm, tools, **kwargs)
-    # resp = await agent.ainvoke(msg)
-    # content = resp['messages'][-1].content
-    # outputParser = PydanticOutputParser(pydantic_object=BaseModel)
-    # rtn = outputParser.parse(content)
-    # return rtn
+        # apiKey = os.environ['CHATAI_API_KEY']
+        # apiURL = os.environ['CHATAI_URL']
+        # llm = AzureChatOpenAI( api_key=apiKey, azure_endpoint=apiURL, openai_api_version='DUMMY',)
+        # agent = create_react_agent(llm, tools, **kwargs)
+        # resp = await agent.ainvoke(msg)
+        # content = resp['messages'][-1].content
+        # outputParser = PydanticOutputParser(pydantic_object=BaseModel)
+        # rtn = outputParser.parse(content)
+        # return rtn
 
-    return tools
+        return tools
 
 
 def get_event_loop() -> Any:
